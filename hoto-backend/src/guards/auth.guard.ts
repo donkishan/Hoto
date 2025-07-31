@@ -10,7 +10,10 @@ export class AuthGuard implements CanActivate{
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest();
         const { url, method } = request;     
-        if ((url === '/auth/login' && method === 'POST') || (url === '/auth/register' && method === 'POST')) {
+        if ((url === '/auth/login' && method === 'POST') 
+            || (url === '/auth/register' && method === 'POST')
+            || (url === '/protected/hello' && method === 'GET')
+        ) {
             return true;
         }
 
