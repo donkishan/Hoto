@@ -1,0 +1,3 @@
+.nav-justified .nav-item, .nav-justified > .nav-link{
+    flex-basis : auto
+}

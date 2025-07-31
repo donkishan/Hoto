@@ -1,0 +1,199 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">{{blocks[0].name}} - Site Readiness</h4>
+        </div>
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Site Readiness</a></li>
+                <li class="breadcrumb-item"><a href="javascript: void(0);">{{ hotoDetails?.projectName }}</a></li>
+                <li class="breadcrumb-item active">{{blocks[0].name}}</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-header justify-content-between">
+                <h4 class="card-title">Request Information</h4>
+            </div>
+            <div class="card-body">
+                <div *ngIf="hotoDetails" class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped dt-responsive align-middle mb-0" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Project Name</th>
+                                    <th>Completion Type</th>
+                                    <th>COD Date</th>
+                                    <th>Initiated Date</th>
+                                    <th>Initiated By</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ hotoDetails.projectCode }}</td>
+                                    <td>{{ hotoDetails.projectName }}</td>
+                                    <td>{{ hotoDetails.completionType }}</td>
+                                    <td>{{ hotoDetails.codDate }}</td>
+                                    <td>{{ hotoDetails.initiatedDate }}</td>
+                                    <td>{{ hotoDetails.name }}</td>
+                                    <td>{{ hotoDetails.status === 'submitted' ? 'Submitted' : '' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="accordion" id="accordionExample">
+                <div *ngFor="let point of readinessPoints; let i = index" class="accordion-item mb-2">
+                    <h2 class="accordion-header" [id]="'heading' + i">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            [attr.data-bs-target]="'#collapse' + i" aria-expanded="false"
+                            [attr.aria-controls]="'collapse' + i">
+                            {{ point.name }}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span [ngClass]="{
+                                    'badge float-end' : true,
+                                    'badge-soft-success text-success': point.status === 'COMPLETED',
+                                    'badge-soft-warning text-warning': point.status === 'IN_PROGRESS',
+                                    'badge-soft-secondary text-secondary': point.status === ''
+                                }"> {{ getStatusTooltip(point.status) }}
+                            </span>
+                        </button>
+
+                    </h2>
+                    <div [id]="'collapse' + i" class="accordion-collapse collapse"
+                        [attr.aria-labelledby]="'heading' + i" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-xxl-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            {{ point.name }}
+                                        </div>
+                                        <div class="card-body">
+                                            <form (submit)="onSubmit($event, point)">
+                                                <div class="row">
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label"><strong>Status</strong></label>
+                                                        <select class="form-select select2" [(ngModel)]="point.status"
+                                                            name="status-{{ i }}"
+                                                            [disabled]="point.status === 'COMPLETED'"
+                                                            data-placeholder="Select Status">
+                                                            <option value="">Select Status</option>
+                                                            <option value="COMPLETED">Completed</option>
+                                                            <option value="IN_PROGRESS">In Progress</option>
+                                                            <option value="PENDING">Pending</option>
+                                                            <option value="on-hold">On Hold</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label"><strong>Reference
+                                                                Document</strong></label>
+                                                        <input type="file" class="form-control"
+                                                            [id]="'certificate-' + point._id"
+                                                            (change)="onFileChange($event, point, 'certificate')"
+                                                            [disabled]="statusMap[point._id]?.status === 'COMPLETED'">
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label"><strong>Images</strong></label>
+                                                        <input type="file" class="form-control"
+                                                            [id]="'image-' + point._id" name="image-{{ i }}"
+                                                            (change)="onFileChange($event, point, 'image')"
+                                                            [disabled]="statusMap[point._id]?.status === 'COMPLETED'"
+                                                            multiple />
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <div class="d-flex justify-content-end mt-3">
+                                                            <button type="submit" class="btn btn-success"
+                                                                [disabled]="statusMap[point._id]?.status === 'COMPLETED'">
+                                                                Submit
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-8">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">Reference
+                                                    Document</div>
+                                                <div class="card-body">
+                                                    <a class="btn btn-sm btn-primary" target="_blank"
+                                                        (click)="viewFile(getCertificateUrl(point._id))">
+                                                        View Reference
+                                                        Document
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">Images</div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table table-bordered align-middle mb-0 datatable-images">
+                                                            <thead class="align-middle thead-sm">
+                                                                <tr class="text-uppercase fs-xxs">
+                                                                    <th>#</th>
+                                                                    <th>Image</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <ng-container
+                                                                    *ngFor="let img of imageMap[point._id]; let i = index">
+                                                                    <tr>
+                                                                        <td>{{ i + 1 }}</td>
+                                                                        <td>
+                                                                            <a class=""
+                                                                                (click)="viewFile(getImageUrl(img))"
+                                                                                data-bs-toggle="tooltip"
+                                                                                data-bs-placement="top"
+                                                                                data-bs-title="Click to View">
+                                                                                {{ img }} <i
+                                                                                    class="ti ti-external-link"></i>
+                                                                            </a>
+                                                                        </td>
+                                                                        <td>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                </ng-container>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="text-success" *ngIf="statusMap[point._id]?.status === 'COMPLETED'">
+                                ✅ Completed — fields are locked.
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

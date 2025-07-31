@@ -1,0 +1,206 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Create Hoto Request</h4>
+    </div>
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a routerLink="/app/hoto-requests">Hoto Requests</a></li>
+        <li class="breadcrumb-item active">Create</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Project Completion Declaration</h5>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label">Project Name<span class="text-danger">*</span></label>
+                <select #projectSelect class="form-select select2" [(ngModel)]="formData.projectId" name="projectId"
+                  data-placeholder="Select Project">
+                  <option *ngFor="let project of projectList" [value]="project.id">
+                    {{ project.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Project ID<span class="text-danger">*</span></label>
+                <input type="text" class="form-control bg-light text-muted" [(ngModel)]="formData.projectCode"
+                  name="projectCode" readonly>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Total Capacity (MW)<span class="text-danger">*</span></label>
+                <input type="text" class="form-control bg-light text-muted" [(ngModel)]="formData.capacity"
+                  name="capacity" readonly>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Completion Type<span class="text-danger">*</span></label>
+                <select #completionSelect class="form-select select2" [(ngModel)]="formData.completionType"
+                  name="completionType" data-placeholder="Completion Type">
+                  <option value="" disabled>Select Completion Type</option>
+                  <option value="Final">Final</option>
+                  <option value="Partial">Partial</option>
+                  <option value="Operational">Operational</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3 mt-1">
+              <div class="col-md-3">
+                <label class="form-label">HOTO For <span class="text-danger">*</span></label>
+                <select class="form-select select2" [(ngModel)]="formData.hotoFor" name="hotoFor"
+                  (ngModelChange)="onHotoForChange()" data-placeholder="HOTO For" #hotoForSelect>
+                  <option value="" disabled>Select HOTO For</option>
+                  <option value="FULL_PROJECT">Full Project</option>
+                  <option value="PARTIAL">Partial</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Hoto Capacity<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" [class.bg-light]="formData.hotoFor === 'FULL_PROJECT'"
+                  [class.text-muted]="formData.hotoFor === 'FULL_PROJECT'"
+                  [readonly]="formData.hotoFor === 'FULL_PROJECT'" [(ngModel)]="formData.hotoCapacity"
+                  name="hotoCapacity" placeholder="HOTO Capacity">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Initiated Date<span class="text-danger">*</span></label>
+                <input type="text" id="declarationDateInput" class="form-control" placeholder="Select date"
+                  [(ngModel)]="formData.initiatedDate" name="initiatedDate">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Initiated By<span class="text-danger">*</span></label>
+                <select #initiatedBy class="form-select select2" [(ngModel)]="formData.initiatedById"
+                  name="initiatedById" (change)="onInitiatedByChange($event)" data-placeholder="Initiated By">
+                  <option *ngFor="let user of users" [value]="user._id">
+                    {{ user.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3 mt-1">
+
+              <div class="col-md-3">
+                <label class="form-label">COD Date<span class="text-danger">*</span></label>
+                <input type="text" id="codDateInput" class="form-control" placeholder="Select COD date"
+                  [(ngModel)]="formData.codDate" name="codDate">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card mt-4">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Completion Details</h5>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#blockModal">
+                      <i class="bi bi-plus-circle"></i> Add Block/Activity
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div *ngIf="blocks.length === 0" class="text-center text-muted">No blocks or activities added yet
+                    </div>
+                    <div *ngIf="blocks.length > 0" class="table-responsive">
+                      <table class="table table-bordered table-sm mb-0">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Block Name</th>
+                            <th>Capacity (MW)</th>
+                            <th>Expected Start Date</th>
+                            <th>Expected End Date</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <tr *ngFor="let block of blocks; let i = index">
+                            <td>{{ block.name }}</td>
+                            <td>{{ block.capacity }}</td>
+                            <td>{{ block.startDate }}</td>
+                            <td>{{ block.endDate }}</td>
+                            <td>
+                              <button class="btn btn-sm btn-warning me-1" (click)="editBlock(i)">Edit
+                              </button>
+                              <button class="btn btn-sm btn-danger" (click)="deleteBlock(i)">Delete
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">Reference Document</label>
+                <input type="file" class="form-control form-control-sm" accept=".pdf, .png, .jpeg, .jpg, .msg"
+                  (change)="onFileChange($event)">
+                <div class="form-text">Upload signed completion proof (PDF/PNG/JPEG/MSG)</div>
+                <div *ngIf="editingId && formData.certificateFileName && !selectedFile" class="mt-3">
+                  <button (click)="viewFile(formData.certificateUrl)" class="btn btn-outline-primary btn-sm">
+                    Download Document
+                  </button>
+                </div>
+              </div>
+
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="submitForm('draft')">Save Draft</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="submitForm('submitted')">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="blockModal" tabindex="-1" aria-labelledby="blockModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="blockModalLabel">Add Block/Activity</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Block Name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="newBlock.name" name="blockName">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Capacity (MW)<span class="text-danger">*</span></label>
+                  <input type="number" class="form-control form-control-sm" [(ngModel)]="newBlock.capacity"
+                    name="blockCapacity">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Expected Start Date<span class="text-danger">*</span></label>
+                  <input type="text" id="startDateInput" class="form-control form-control-sm"
+                    placeholder="Select start date" [(ngModel)]="newBlock.startDate" name="blockStartDate">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Expected End Date<span class="text-danger">*</span></label>
+                  <input type="text" id="endDateInput" class="form-control form-control-sm"
+                    placeholder="Select end date" [(ngModel)]="newBlock.endDate" name="blockEndDate">
+                </div>
+              </form>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="saveBlock()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

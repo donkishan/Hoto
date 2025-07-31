@@ -1,0 +1,314 @@
+<!-- ============================================================== -->
+<!-- Start Main Content -->
+<!-- ============================================================== -->
+<div class="container-fluid min-vh-100 d-flex flex-column">
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">{{isEditMode?'Update': 'Create'}} Project</h4>
+    </div>
+
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Mastes</a></li>
+        <li class="breadcrumb-item"><a routerLink="/app/projects">Projects</a></li>
+        <li class="breadcrumb-item active">{{isEditMode ? 'Update': 'Create'}}</li>
+      </ol>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xxl-12">
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit('submitted')">
+        <div class="card">
+          <div class="card-header">
+            <ul class="nav nav-pills card-header-pills justify-content-center" id="formTabs">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="pill" href="#step1">Project Data</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#step2">Project Site Data</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#step3">Plant Configuration and Design</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#step4">PV System Configurations</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="pill" href="#step5">PV System - Racking Design</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-body">
+            <div class="tab-content">
+              <!-- Step 1 -->
+              <div class="tab-pane fade show active" id="step1">
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    <label class="form-label">Project ID <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="projectId" class="form-control "
+                      placeholder="Unique Project ID">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">SPV Name<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="spvName" class="form-control " placeholder="SPV Name">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Project Name<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="projectName" class="form-control " placeholder="Project Name">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Project Site - Reference Coordinates<span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="coordinates" class="form-control "
+                      placeholder="Project Site - Reference Coordinates">
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-3">
+                    <label class="form-label">Country<span class="text-danger">*</span></label>
+                    <select #countrySelect formControlName="country" class="form-control select2"
+                      (change)="onCountryChangeEvent($event)">
+                      <option value="">Select Country</option>
+                      <option *ngFor="let country of countries" [value]="country._id">
+                        {{ country.countryName }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Region/Province<span class="text-danger">*</span></label>
+                    <select #regionSelect class="form-select select2" formControlName="region">
+                      <option value="">Select Timezone</option>
+                      <option *ngFor="let r of regions" [value]="r.name">{{ r.name }}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Timezone<span class="text-danger">*</span></label>
+                    <select #timezoneSelect class="form-select select2" formControlName="timezone">
+                      <option value="">Select Timezone</option>
+                      <option *ngFor="let tz of timezones" [value]="tz">{{ tz }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="tab-pane fade" id="step2">
+                <div class="row g-3 ">
+                  <div class="col-md-3">
+                    <label class="form-label">Total DC/AC Plant Power (MW)<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="plantPower" class="form-control " placeholder="100 MW/ 140 MWp">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Google earth site and Area Reference<span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="googleEarth" class="form-control "
+                      placeholder="Specify[name] of attached files">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Construction Commencement<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="constructionStart" class="form-control "
+                      placeholder="Construction Commencement">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Expected Commissioning<span class="text-danger">*</span></label>
+                    <input id="commissioningInput" type="text" class="form-control" formControlName="commissioning"
+                      placeholder="Select commissioning date" />
+                  </div>
+                </div>
+                <div class="row g-3  mt-1">
+
+                  <div class="col-md-12">
+                    <label class="form-label">Description of Site<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="siteDescription" class="form-control "
+                      placeholder="Description of Site">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="tab-pane fade" id="step3">
+                <div class="row g-3 ">
+                  <div class="col-md-3">
+                    <label class="form-label">Global Project<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="globalProject" class="form-control "
+                      placeholder="Global Project">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Rated Capacity - DC (kW)<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="ratedCapacityDC" class="form-control "
+                      placeholder="Rated Capacity - DC (kW)">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Rated Capacity - AC (kW)<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="ratedCapacityAC" class="form-control "
+                      placeholder="Rated Capacity - AC (kW)">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">DC/AC Ratio<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="dcAcRatio" class="form-control " placeholder="DC/AC Ratio">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="tab-pane fade" id="step4">
+                <div class="row g-3" [formGroup]="pvSystemForm">
+                  <div class="col-md-3" *ngFor="let field of pvFieldMap">
+                    <label class="form-label">
+                      {{ field.label }}
+                      <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" [formControlName]="field.key" class="form-control " [placeholder]="field.label">
+                  </div>
+                </div>
+
+                <div class="row mt-3">
+                  <div class="col-xxl-12">
+                    <button type="button" class="btn btn-success float-end" (click)="addPVSystem()">
+                      {{ editPVIndex !== null ? 'Update Configuration' : 'Add PV Configuration' }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- PV Config Table -->
+                <div class="row mt-3">
+                  <div class="col-xxl-12">
+                    <div class="table-responsive">
+                      <table *ngIf="pvSystemList.length > 0"
+                        class="table table-sm table-bordered table-striped dt-responsive align-middle mb-0">
+                        <thead class="thead-sm text-uppercase fs-xxs">
+                          <tr>
+                            <th>Solar Module</th>
+                            <th>Solar Module and Rated Power</th>
+                            <th>No. of Solar Module in Plant</th>
+                            <th>Inverter</th>
+                            <th>Inverter Rated Power</th>
+                            <th>No. of Inverter in Plant</th>
+                            <th>Tracking Fixed Installation</th>
+                            <th>Tracking System</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let config of pvSystemList; let i = index">
+                            <td>{{ config.solarModule }}</td>
+                            <td>{{ config.solarPower }}</td>
+                            <td>{{ config.solarCount }}</td>
+                            <td>{{ config.inverter }}</td>
+                            <td>{{ config.inverterPower }}</td>
+                            <td>{{ config.inverterCount }}</td>
+                            <td>{{ config.installationType }}</td>
+                            <td>{{ config.trackingSystem }}</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary" (click)="editPVSystem(i)"><i
+                                  class="ti ti-edit" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  data-bs-title="Edit"></i></button>&nbsp;
+                              <button type="button" class="btn btn-sm btn-danger" (click)="deletePVSystem(i)"><i
+                                  class="ti ti-trash" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  data-bs-title="Delete"></i></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 5 -->
+              <div class="tab-pane fade" id="step5">
+                <div class="row g-3 ">
+                  <div class="col-md-3">
+                    <label class="form-label">Solar Module Orientation<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="orientation" class="form-control "
+                      placeholder="Solar Module Orientation">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Row Spacing (Pitch)<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="rowSpacing" class="form-control "
+                      placeholder="Row Spacing (Pitch)">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Height Off Ground<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="height" class="form-control " placeholder="Height Off Ground">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Ground Coverage Ratio<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="gcr" class="form-control " placeholder="Ground Coverage Ratio">
+                  </div>
+                </div>
+                <div class="row g-3  mt-1">
+                  <div class="col-md-3">
+                    <label class="form-label">Area Limitations<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="areaLimitations" class="form-control "
+                      placeholder="Area Limitations">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">No.Solar Modules per String<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="modulesPerString" class="form-control "
+                      placeholder="No.Solar Modules per String">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">No.Strings per Inverter<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="stringsPerInverter" class="form-control "
+                      placeholder="No.Strings per Inverter">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Pnom Ratio<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="pnomRatio" class="form-control " placeholder="Pnom Ratio">
+                  </div>
+                </div>
+                <div class="row g-3  mt-1">
+                  <div class="col-md-3">
+                    <label class="form-label"> Module Cleaning Event<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="cleaningEvent" class="form-control "
+                      placeholder=" Module Cleaning Event">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Robotic Cleaning<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="roboticCleaning" class="form-control "
+                      placeholder="Robotic Cleaning">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer d-flex justify-content-between">
+            <!-- Previous button: hidden on first step -->
+            <button type="button" class="btn btn-secondary" (click)="goToPreviousStep()" *ngIf="currentStepIndex > 0">
+              Previous
+            </button>
+
+            <!-- Right side: Next or Submit depending on step -->
+            <div class="ms-auto">
+              <!-- Next button: only visible before last step -->
+              <button type="button" class="btn btn-info me-2" (click)="goToNextStep()"
+                *ngIf="currentStepIndex < stepIds.length - 1">
+                Next
+              </button>
+
+              <!-- Submit button: only visible on last step -->
+
+              <!-- Save as Draft and Submit Buttons: only visible on last step -->
+              <div *ngIf="currentStepIndex === stepIds.length - 1" class="d-flex gap-2 ">
+                <button type="button" class="btn btn-warning" (click)="onSubmit('draft')">
+                  Save as Draft
+                </button>
+
+                <button type="submit" class="btn btn-primary" (click)="onSubmit('submitted')">
+                  {{isEditMode?'Update': 'Create'}} Project
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- container -->
+<!-- ============================================================== -->
+<!-- End of Main Content -->
+<!-- ============================================================== -->

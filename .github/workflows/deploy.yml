@@ -1,0 +1,61 @@
+name: CI/CD Deploy to Linux Server (No Docker, No K8s)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Build Angular
+      - name: Install Angular deps and build
+        run: |
+          cd hoto-frontend
+          npm install
+          npm run build --prod
+
+      # Build NestJS
+      - name: Install NestJS deps and build
+        run: |
+          cd hoto-backend
+          npm install
+          npm run build
+
+      # Upload Angular dist to /var/www/html
+      - name: Deploy Angular (frontend)
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "hoto-frontend/dist/**/*"
+          target: "${{ secrets.SERVER_FRONT_PATH }}"
+          strip_components: 2
+
+      # Upload NestJS dist to /var/www/html/nest-app
+      - name: Deploy NestJS (backend)
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "hoto-backend/dist/**/*"
+          target: "${{ secrets.SERVER_BACK_PATH }}/dist"
+          strip_components: 2
+
+      # Optional: Restart PM2 or backend
+      - name: Restart backend using SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.SERVER_BACK_PATH }}
+            pm2 restart nest-app || pm2 start dist/main.js --name nest-app

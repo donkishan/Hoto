@@ -1,0 +1,14 @@
+{
+    "name": "hoto-monorepo",
+    "private": true,
+    "workspaces": [
+        "hoto-frontend",
+        "hoto-backend"
+    ],
+    "scripts": {
+        "start:frontend": "npm --workspace hoto-frontend run start",
+        "start:backend": "npm --workspace hoto-backend run start",
+        "build:frontend": "npm --workspace hoto-frontend run build",
+        "build:backend": "npm --workspace hoto-backend run build"
+    }
+}

@@ -1,0 +1,103 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">View HOTO REquest</h4>
+        </div>
+
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a routerLink="/app/hoto-requests">HOTO Request</a></li>
+                <li class="breadcrumb-item active">View</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header justify-content-between">
+                    <h4 class="card-title">Request Information</h4>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="hotoDetails" class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered align-middle mb-0" id="hotoDetailsTable">
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Project Name</th>
+                                    <th>Total Capacity(MW)</th>
+                                    <th>Completion Type</th>
+                                </tr>
+
+                                <tr>
+                                    <td>{{ hotoDetails.projectCode }}</td>
+                                    <td>{{ hotoDetails.projectName }}</td>
+                                    <td>{{ hotoDetails.capacity }}</td>
+                                    <td>{{ hotoDetails.completionType }}</td>
+                                </tr>
+                                <tr>
+                                    <th>HOTO For</th>
+                                    <th>HOTO Capacity(MW)</th>
+                                    <th>Initiated Date</th>
+                                    <th>Initiated By</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ hotoDetails.hotoFor=='FULL_PROJECT'?'Full Project':'Partial' }}</td>
+                                    <td>{{ hotoDetails.hotoCapacity }}</td>
+                                    <td>{{ hotoDetails.initiatedDate }}</td>
+                                    <td>{{ hotoDetails.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>COD Date</th>
+                                    <th>Status</th>
+                                    <th>Reference Document</th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td>{{ hotoDetails.codDate }}</td>
+                                    <td>{{ hotoDetails.status === 'submitted' ? 'Submitted' : '' }}</td>
+                                    <td>
+                                        <div *ngIf="certificateFileName">
+                                            <button (click)="viewFile(certificateUrl)"
+                                                class="btn btn-outline-primary btn-sm">
+                                                Download Document
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header justify-content-between">
+                    <h4 class="card-title">Block List</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Block Name</th>
+                                    <th>Capacity(MW)</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let block of blocks">
+                                    <td>{{ block.name }}</td>
+                                    <td>{{ block.capacity }}</td>
+                                    <td>{{ block.startDate }}</td>
+                                    <td>{{ block.endDate }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "hoto-frontend": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/assets/plugins/jsvectormap/jsvectormap.min.css",
+              "src/assets/plugins/datatables/responsive.bootstrap5.min.css",
+              "src/assets/css/vendors.min.css",
+              "src/assets/css/app.min.css",
+              "node_modules/select2/dist/css/select2.min.css",
+              "src/styles.css",
+              "node_modules/flatpickr/dist/flatpickr.min.css"
+            ],
+            "scripts": [
+              "src/assets/js/config.js",
+              "src/assets/js/vendors.min.js",
+              "src/assets/plugins/jsvectormap/jsvectormap.min.js",
+              "src/assets/js/maps/world.js",  
+              "src/assets/js/pages/custom-table.js",
+              "node_modules/select2/dist/js/select2.min.js",
+              "node_modules/flatpickr/dist/flatpickr.min.js", 
+              "src/assets/plugins/datatables/dataTables.min.js",
+              "src/assets/plugins/datatables/dataTables.bootstrap5.min.js",
+              "src/assets/plugins/datatables/dataTables.responsive.min.js",
+              "src/assets/plugins/datatables/responsive.bootstrap5.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "100MB",
+                  "maximumError": "100MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100MB",
+                  "maximumError": "100MB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "hoto-frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "hoto-frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}
