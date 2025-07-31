@@ -45,9 +45,9 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "hoto-backend/dist/src/*"
-          target: "${{ secrets.SERVER_BACK_PATH }}"
-          strip_components: 2
+          source: "hoto-backend/dist/src/"
+          target: "${{ secrets.SERVER_BACK_PATH }}/dist/"
+          strip_components: 3
 
       # Optional: Restart PM2 or backend
       - name: Restart backend using SSH
