@@ -36,7 +36,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "hoto-frontend/dist/hoto-frontend/browser/"
           target: "${{ secrets.SERVER_FRONT_PATH }}"
-          strip_components: 3
+          strip_components: 4
 
       # Upload NestJS dist to /var/www/html/nest-app
       - name: Deploy NestJS (backend)
