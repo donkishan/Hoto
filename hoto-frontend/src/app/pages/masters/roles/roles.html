@@ -1,0 +1,94 @@
+<!-- ============================================================== -->
+<!-- Start Main Content -->
+<!-- ============================================================== -->
+
+
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">Roles</h4>
+        </div>
+
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Masters</a></li>
+                <li class="breadcrumb-item active">Roles</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row ">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Create Role</h4>
+                </div>
+
+                <div class="card-body">
+                    <form (ngSubmit)="saveRole(roleForm)" #roleForm="ngForm">
+                        <div class="row g-2">
+                            <div class="mb-3 col-md-12">
+                                <label for="mst_divisions_id" class="form-label">Division <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select select2" id="mst_divisions_id" name="mst_divisions_id">
+                                    <option value="">Select Division</option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <label for="role_name" class="form-label">Role Name <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" [ngClass]="{
+                                                            'form-control form-control-sm': true,
+                                                            'is-invalid': roleRef.invalid && roleRef.touched
+                                                    }" [(ngModel)]="role_name" name="role_name" required
+                                    placeholder="Role Name" minlength="2" #roleRef="ngModel">
+
+                                <div *ngIf="roleRef.invalid && roleRef.touched" class="invalid-feedback">
+                                    Role name is required and must be at least 2 characters long.
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" [disabled]="roleForm.invalid" class="btn btn-primary float-end">
+                            {{ isEditMode ? 'Update' : 'Save' }}
+                        </button>
+                    </form>
+                </div> <!-- end card-body -->
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header justify-content-between">
+                    <h4 class="card-title">Roles</h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0" id="dataTable">
+                            <thead class="align-middle thead-sm">
+                                <tr class="text-uppercase fs-xxs">
+                                    <th><input type="checkbox"></th>
+                                    <th>Division</th>
+                                    <th>Role Name</th>
+                                    <th>Status</th>
+                                    <th>Created On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- container -->
+
+
+<!-- ============================================================== -->
+<!-- End of Main Content -->
+<!-- ============================================================== -->

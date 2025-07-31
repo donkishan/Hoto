@@ -1,0 +1,128 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">{{blocks[0].name}} - Puch Point Management</h4>
+        </div>
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getMilestoneLink()">Puch Point Management</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getProjectLink(hotoDetails._id)">{{
+                        hotoDetails?.projectName }}</a>
+                </li>
+                <li class="breadcrumb-item active">{{blocks[0].name}}</li>
+            </ol>
+        </div>
+    </div>
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" aria-expanded="false" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Advance Search
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form [formGroup]="filterForm">
+                        <div class="row align-items-end">
+                            <div class="col-md-10">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class="form-label">Location</label>
+                                        <input class="form-control" type="text" id="location"
+                                            formControlName="location">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Area</label>
+                                        <input class="form-control" type="text" id="area" formControlName="area">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Respective Team
+                                        </label>
+                                        <select formControlName="team" id="repective_team" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="PROJECT_TEAM">Project Team</option>
+                                            <option value="ASSET_TEAM">Asset Team</option>
+                                            <option value="QUALITY_TEAM">Quality Team</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Category
+                                        </label>
+                                        <select formControlName="category" id="category" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="CRITICAL">Critical</option>
+                                            <option value="NON_CRITICAL">Non Critical</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="button" id="search_btn" (click)="search()" class="btn btn-purple"
+                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Search">
+                                        <i class="ti ti-search"></i>
+                                    </button>
+                                    &nbsp;
+                                    <button type="button" id="reset_btn" (click)="reset()" class="btn btn-success"
+                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Reset"><i
+                                            class="ti ti-restore"></i></button>
+                                    &nbsp;
+                                    <button type="button" id="download_excel" (click)="downloadExcel()"
+                                        class="btn btn-danger" data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Download Excel"><i
+                                            class="ti ti-file-type-xls"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12">
+            <div class="card">
+                <div class="card-header justify-content-between">
+                    <h4 class="card-title">Punch Points </h4>
+                    <div class="div" *ngIf="acknowledgeStatus?.trim() !== 'acknowledged'">
+                        <button class="btn btn-purple btn-sm" type="button" (click)="acknowledge()"
+                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Acknowledge Punch Points">
+                            Acknowledge
+                        </button>
+                        &nbsp;
+                        <a [routerLink]="['/app/punch-points-project-team/bulk-upload', hotoDetails?._id, blocks[0]?._id]"
+                            class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-circle"></i> Bulk Upload
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table table-bordered align-middle mb-0 w-100">
+                            <thead class="thead-sm text-uppercase fs-xxs">
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Description</th>
+                                    <th>Area</th>
+                                    <th>Category of Work</th>
+                                    <th>Respective Team</th>
+                                    <th>Remarks</th>
+                                    <th>Category</th>
+                                    <th>PR Impacted</th>
+                                    <th>Traget Closure Date</th>
+                                    <th>Remarks</th>
+                                    <th>RP</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<!-- src/app/app.html -->
+<div class="wrapper">
+    <ng-container *ngIf="showLayout">
+        <app-topbar></app-topbar>
+        <app-header></app-header>
+    </ng-container>
+
+    <div class="content-page">
+        <router-outlet></router-outlet>
+        <ng-container *ngIf="showLayout">
+            <app-footer></app-footer>
+        </ng-container>
+    </div>
+</div>

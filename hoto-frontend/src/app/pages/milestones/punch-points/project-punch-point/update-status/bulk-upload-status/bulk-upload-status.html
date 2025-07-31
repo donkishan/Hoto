@@ -1,0 +1,68 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">{{blocks[0].name}} - Bulk Upload</h4>
+        </div>
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getMilestoneLink()">Puch Point Management</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getProjectLink(hotoDetails._id)">{{
+                        hotoDetails?.projectName }}</a>
+                </li>
+                <li class="breadcrumb-item"><a
+                        [routerLink]="getBlockDetailsLink(hotoDetails._id,blocks[0]._id)">{{blocks[0].name}}</a></li>
+                <li class="breadcrumb-item active">Bulk Upload</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row ">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Upload Excel</h4>
+                </div>
+
+                <div class="card-body">
+                    <form>
+                        <div class="row g-2">
+                            <div class="mb-3 col-md-12">
+                                <p class="text-muted">Upload Excel File</p>
+                                <input type="file" class="form-control mb-2" (change)="onFileSelect($event)" />
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" [disabled]="!selectedFile"
+                            (click)="submitUpload($event)">Submit</button>
+                    </form>
+                </div> <!-- end card-body -->
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header justify-content-between">
+                    <h4 class="card-title">Uploaded Files</h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0" id="dataTable">
+                            <thead class="align-middle thead-sm">
+                                <tr class="text-uppercase fs-xxs">
+                                    <th>Uploaded On</th>
+                                    <th>Uploaded By</th>
+                                    <th>Success Record</th>
+                                    <th>Failed Record</th>
+                                    <th>File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <!-- Page Title -->
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Users</h4>
+    </div>
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item">Masters</li>
+        <li class="breadcrumb-item"><a href="/app/users">Users</a></li>
+        <li class="breadcrumb-item active">Create</li>
+      </ol>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header justify-content-between">
+          <h4 class="card-title">Create User</h4>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                <input formControlName="name" type="text" class="form-control  has-error"
+                  [ngClass]="{ 'is-invalid': userForm.get('name')?.invalid && userForm.get('name')?.touched }"
+                  placeholder="Enter name">
+                <div *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+                  <small *ngIf="userForm.get('name')?.errors?.['required']" class="text-danger">Name is
+                    required.</small>
+                  <small *ngIf="userForm.get('name')?.errors?.['pattern']" class="text-danger">Only letters and spaces
+                    allowed.</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Email <span class="text-danger">*</span></label>
+                <input formControlName="email" type="email"
+                  [ngClass]="{ 'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched }"
+                  class="form-control" placeholder="Enter email">
+                <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+                  <small *ngIf="userForm.get('email')?.errors?.['required']" class="text-danger">Email is
+                    required.</small>
+                  <small *ngIf="userForm.get('email')?.errors?.['email']" class="text-danger">Invalid email
+                    format.</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Mobile No <span class="text-danger">*</span></label>
+                <input formControlName="mobile" type="text" class="form-control"
+                  [ngClass]="{ 'is-invalid': userForm.get('mobile')?.invalid && userForm.get('mobile')?.touched }"
+                  placeholder="Enter mobile number">
+                <div *ngIf="userForm.get('mobile')?.invalid && userForm.get('mobile')?.touched">
+                  <small *ngIf="userForm.get('mobile')?.errors?.['required']" class="text-danger">Mobile is
+                    required.</small>
+                  <small *ngIf="userForm.get('mobile')?.errors?.['pattern']" class="text-danger">Must be 10 digits
+                    only.</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Division <span class="text-danger">*</span></label>
+                <select #divisionSelect formControlName="division"
+                  [ngClass]="{ 'is-invalid': userForm.get('division')?.invalid && userForm.get('division')?.touched }"
+                  class="form-select select2">
+                  <option value="">Select Division</option>
+                  <option *ngFor="let division of divisionList" [value]="division._id">
+                    {{ division.divisionCode }} - {{ division.divisionName }}
+                  </option>
+                </select>
+                <div *ngIf="userForm.get('division')?.invalid && userForm.get('division')?.touched">
+                  <small class="text-danger">Division is required.</small>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-3">
+                <label class="form-label">Role <span class="text-danger">*</span></label>
+                <select #roleSelect formControlName="role"
+                  [ngClass]="{ 'is-invalid': userForm.get('role')?.invalid && userForm.get('role')?.touched }"
+                  class="form-select select2">
+                  <option value="">-- Select Role --</option>
+                  <option *ngFor="let role of rolesList" [value]="role._id">
+                    {{ role.role_name }}
+                  </option>
+                </select>
+                <div *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched">
+                  <small class="text-danger">Role is required.</small>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Profile Image</label>
+                <input type="file" class="form-control "
+                  [ngClass]="{ 'is-invalid': userForm.get('profileImage')?.invalid && userForm.get('profileImage')?.touched }"
+                  accept="image/*" (change)="onImageSelected($event)">
+                <div *ngIf="userForm.get('profileImage')?.errors?.['invalidType']">
+                  <small class="text-danger">Only image files (JPG, PNG, JPEG) are allowed.</small>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 text-end">
+              <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">{{ isEditMode ? 'Update' : 'Save'
+                }}</button>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()"
+                [disabled]="isSubmitting">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

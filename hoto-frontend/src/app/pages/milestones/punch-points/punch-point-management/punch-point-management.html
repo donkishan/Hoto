@@ -1,0 +1,132 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">{{blocks[0].name}} - Puch Point Management</h4>
+        </div>
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getMilestoneLink()">Puch Point Management</a></li>
+                <li class="breadcrumb-item"><a [routerLink]="getProjectLink(hotoDetails._id)">{{
+                        hotoDetails?.projectName }}</a>
+                </li>
+                <li class="breadcrumb-item active">{{blocks[0].name}}</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xxl-3" *ngIf="acknowledgeStatus === 'PENDING'">
+            <div class="card">
+                <div class="card-header card-tabs d-flex align-items-center">
+                    <ul class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
+                        <li class="nav-item">
+                            <a href="#profile-b2" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
+                                <i class="ti ti-home d-md-none d-block"></i>
+                                <span class="d-none d-md-block">Bulk Upload</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#home-b2" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
+                                <i class="ti ti-user-circle d-md-none d-block"></i>
+                                <span class="d-none d-md-block">Create Manual</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="profile-b2">
+                            <p class="text-muted">Upload Excel File</p>
+                            <input type="file" class="form-control mb-2" (change)="onFileSelect($event)" />
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-outline-primary" (click)="downloadSample()">Download Sample
+                                    File</button>
+                                <button class="btn btn-primary" [disabled]="!selectedFile"
+                                    (click)="submitUpload()">Submit</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="home-b2">
+                            <form (ngSubmit)="saveTask(taskForm)" #taskForm="ngForm">
+                                <div class="row">
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Location <span class="text-danger">*</span> </label>
+                                        <input type="text" name="location" [(ngModel)]="task.location" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Description <span class="text-danger">*</span></label>
+                                        <input type="text" name="description" [(ngModel)]="task.description" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Area <span class="text-danger">*</span></label>
+                                        <input type="text" name="area" [(ngModel)]="task.area" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Category of Work <span class="text-danger">*</span></label>
+                                        <input type="text" name="categoryWork" [(ngModel)]="task.categoryWork" required
+                                            class="form-control" />
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Respective Team <span class="text-danger">*</span></label>
+                                        <select name="team" [(ngModel)]="task.team" required class="form-select">
+                                            <option value="">Select Team</option>
+                                            <option value="PROJECT_TEAM">Project Team</option>
+                                            <option value="ASSET_TEAM">Asset Team</option>
+                                            <option value="QIALITY_TEAM">Quality Team</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Category <span class="text-danger">*</span></label>
+                                        <select name="category" [(ngModel)]="task.category" required
+                                            class="form-select">
+                                            <option value="">Select Category</option>
+                                            <option value="CRITICAL">Critical</option>
+                                            <option value="NON_CRITICAL">Non Critical</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <label>Remarks <span class="text-danger">*</span></label>
+                                        <input type="text" name="remarks" [(ngModel)]="task.remarks"
+                                            class="form-control" />
+                                    </div>
+                                    <div class="col-xxl-12 mb-2">
+                                        <button class="btn btn-primary float-end"
+                                            [disabled]="taskForm.invalid">Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="acknowledgeStatus === 'PENDING' ? 'col-xxl-9' : 'col-xxl-12'">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Punch Points</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table table-bordered align-middle mb-0 w-100">
+                            <thead class="thead-sm text-uppercase fs-xxs">
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Location</th>
+                                    <th>Description</th>
+                                    <th>Area</th>
+                                    <th>Category of Work</th>
+                                    <th>Respective Team</th>
+                                    <th>Category</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

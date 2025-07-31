@@ -1,0 +1,312 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Team mobilization</h4>
+    </div>
+
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+        <li class="breadcrumb-item"><a href="app/team-mobilisation">Team mobilization</a></li>
+        <li class="breadcrumb-item active">{{ hotoDetails.projectName }}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header justify-content-between">
+          <h4 class="card-title">Request Information</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="hotoDetails" class="row">
+            <div class="col-md-12">
+              <table class="table table-bordered dt-responsive align-middle mb-0" id="projectDataTable">
+                <thead>
+                  <tr>
+                    <th>Project ID</th>
+                    <th>Project Name</th>
+                    <th>Completion Type</th>
+                    <th>COD Date</th>
+                    <th>Initiated Date</th>
+                    <th>Initiated By</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ hotoDetails.projectCode }}</td>
+                    <td>{{ hotoDetails.projectName }}</td>
+                    <td>{{ hotoDetails.completionType }}</td>
+                    <td>{{ hotoDetails.codDate }}</td>
+                    <td>{{ hotoDetails.initiatedDate }}</td>
+                    <td>{{ hotoDetails.name }}</td>
+                    <td>{{ hotoDetails.status === 'submitted' ? 'Submitted' : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header justify-content-between">
+          <h4 class="card-title">Block List</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th>Block Name</th>
+                  <th>Team</th>
+                  <th>Capacity</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let block of blocks">
+                  <td>{{ block.name }}</td>
+                  <td>
+                    <i class="ti ti-users"></i>
+                    {{ block.memberCount || 0 }} Members
+                  </td>
+                  <td>{{ block.capacity }}</td>
+                  <td>{{ block.startDate }}</td>
+                  <td>{{ block.endDate }}</td>
+                  <td *ngIf="['Asset Management Team']| isDivision">
+                    <button *ngIf="block.assetTeamAckStatus?.trim() === 'PENDING'" type="button"
+                      class="btn btn-sm btn-purple" data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                      (click)="openAddMemberModal(block._id, false)">
+                      Add Member
+                    </button>
+
+                    <!-- Show "View Member" if already requested -->
+                    <button *ngIf="block.assetTeamAckStatus?.trim() !== 'PENDING'" type="button"
+                      class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                      (click)="openAddMemberModal(block._id, true)">
+                      View Member
+                    </button> &nbsp;
+                    <button *ngIf="block.assetTeamAckStatus == 'PENDING' && block.memberCount>0" type="button"
+                      class="btn btn-sm btn-success" (click)="request_for_acknowledgement(block._id)">
+                      Request For Acknowledgement
+                    </button>
+                  </td>
+                  <td *ngIf="['Quality Team']| isDivision">
+                    <button *ngIf="block.qualityTeamAckStatus?.trim() === 'PENDING'" type="button"
+                      class="btn btn-sm btn-purple" data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                      (click)="openAddMemberModal(block._id, false)">
+                      Add Member
+                    </button>
+
+                    <!-- Show "View Member" if already requested -->
+                    <button *ngIf="block.qualityTeamAckStatus?.trim() !== 'PENDING'" type="button"
+                      class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                      (click)="openAddMemberModal(block._id, true)">
+                      View Member
+                    </button> &nbsp;
+                    <button *ngIf="block.qualityTeamAckStatus == 'PENDING' && block.memberCount>0" type="button"
+                      class="btn btn-sm btn-success" (click)="request_for_acknowledgement(block._id)">
+                      Request For Acknowledgement
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="full-width-modal" class="modal fade" tabindex="-1" role_name="dialog" aria-labelledby="fullWidthModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-full-width">
+    <div class="modal-content">
+      <div class="modal-body">
+        <ul class="nav nav-tabs nav-bordered mb-3">
+          <li class="nav-item">
+            <a href="#home-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
+              Assigned Members
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="!isViewOnlyMode">
+            <a href="#profile-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
+              Members
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="home-b1">
+            <div class="row">
+              <div class="col-xxl-8">
+                <div class="card">
+                  <div class="card-header justify-content-between">
+                    <h4 class="card-title">Assigned Members</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-xxl-12" *ngIf="!isViewOnlyMode">
+                        <div id="bulk-actions">
+                          <div class="mb-3 d-inline-block">
+                            <button class="btn btn-sm btn-danger" type="button" (click)="bulkRemove($event)">
+                              Bulk Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xxl-12">
+                        <div class="table-responsive">
+                          <table class="table table-bordered align-middle mb-0" id="dataTable1">
+                            <thead class="align-middle thead-sm">
+                              <tr class="text-uppercase fs-xxs">
+                                <th>
+                                  <input type="checkbox" id="checkAll" (change)="toggleAll1($event)" />
+                                </th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Start Date</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane show " id="profile-b1">
+            <div class="row">
+              <div class="col-xxl-4">
+                <div class="card">
+                  <div class="card-header justify-content-between">
+                    <h4 class="card-title">
+                      Add Member
+                    </h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <form [formGroup]="newMemberForm" (ngSubmit)="onAddNewMember()">
+                        <div class="col-md-12 mb-2">
+                          <label class="form-label fw-bold">Name <span class="text-danger">*</span></label>
+                          <input type="text" formControlName="name" class="form-control" placeholder="Enter name"
+                            [ngClass]="{ 'is-invalid': newMemberForm.get('name')?.invalid && newMemberForm.get('name')?.touched }">
+                          <div *ngIf="newMemberForm.get('name')?.invalid && newMemberForm.get('name')?.touched">
+                            <small *ngIf="newMemberForm.get('name')?.errors?.['required']" class="text-danger">Name is
+                              required.</small>
+                            <small *ngIf="newMemberForm.get('name')?.errors?.['pattern']" class="text-danger">Only
+                              letters and spaces
+                              allowed.</small>
+                          </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                          <label class="form-label fw-bold">Role <span class="text-danger">*</span></label>
+                          <input type="text" formControlName="role_name" class="form-control" placeholder="Enter role"
+                            [ngClass]="{ 'is-invalid': newMemberForm.get('role_name')?.invalid && newMemberForm.get('role_name')?.touched }">
+                          <div
+                            *ngIf="newMemberForm.get('role_name')?.invalid && newMemberForm.get('role_name')?.touched">
+                            <small *ngIf="newMemberForm.get('role_name')?.errors?.['required']" class="text-danger">Role
+                              is
+                              required.</small>
+                          </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                          <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                          <input type="email" formControlName="email" class="form-control" placeholder="Enter email"
+                            [ngClass]="{ 'is-invalid': newMemberForm.get('email')?.invalid && newMemberForm.get('email')?.touched }">
+                          <div *ngIf="newMemberForm.get('email')?.invalid && newMemberForm.get('email')?.touched">
+                            <small *ngIf="newMemberForm.get('email')?.errors?.['required']" class="text-danger">Email
+                              is
+                              required.</small>
+                            <small *ngIf="newMemberForm.get('email')?.errors?.['email']" class="text-danger">Invalid
+                              email
+                              format.</small>
+                          </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                          <label class="form-label fw-bold">Deployed Date <span class="text-danger">*</span></label>
+                          <input type="text" formControlName="deployed_date" class="form-control flatpickr-input"
+                            data-provider="flatpickr" data-date-format="d-m-Y" data-default-date="">
+                        </div>
+                        <div class="col-12 text-end">
+                          <button class="btn btn-success mt-2" type="submit" [disabled]="newMemberForm.invalid">
+                            <i class="ti ti-user-plus me-1"></i> {{ editMode ? 'Update' : 'Add' }}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-8">
+                <div class="card">
+                  <div class="card-header justify-content-between">
+                    <h4 class="card-title">Members</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-xxl-12">
+                        <div id="bulk-actions">
+                          <div class="mb-3 d-inline-block">
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                                Bulk Action
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><button class="dropdown-item" type="button" (click)="bulkAssign($event)">Bulk
+                                    Assign</button></li>
+                                <li><button class="dropdown-item" type="button" (click)="bulkDelete($event)">Bulk
+                                    Delete</button></li>
+                              </ul>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xxl-12">
+                        <div class="table-responsive">
+                          <table class="table table-bordered align-middle mb-0" id="dataTable">
+                            <thead class="align-middle thead-sm">
+                              <tr class="text-uppercase fs-xxs">
+                                <th>
+                                  <input type="checkbox" id="checkAll" (change)="toggleAll($event)" />
+                                </th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Start Date</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

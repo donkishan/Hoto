@@ -1,0 +1,204 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="page-title-head d-flex align-items-center">
+        <div class="flex-grow-1">
+            <h4 class="fs-sm text-uppercase fw-bold m-0">Team mobilization</h4>
+        </div>
+
+        <div class="text-end">
+            <ol class="breadcrumb m-0 py-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);">Milestone</a></li>
+                <li class="breadcrumb-item"><a href="app/team-mobilisation">Team mobilization</a></li>
+                <li class="breadcrumb-item active">{{ hotoDetails?.projectName }}</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-tabs d-flex align-items-center">
+
+                    <ul class="nav nav-tabs nav-justified card-header-tabs nav-bordered" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a href="#home-ct" data-bs-toggle="tab" aria-expanded="true" class="nav-link active"
+                                aria-selected="true" tabindex="-1" role="tab">
+                                <i class="ti ti-home d-md-none d-block"></i>
+                                <span class="d-none d-md-block">Asset Team</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a href="#profile-ct" data-bs-toggle="tab" aria-expanded="false" class="nav-link"
+                                aria-selected="false" role="tab">
+                                <i class="ti ti-user-circle d-md-none d-block"></i>
+                                <span class="d-none d-md-block">Quality Team</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="home-ct" role="tabpanel">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Block Name</th>
+                                        <th>Team</th>
+                                        <th>Capacity(MW)</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Action</th>
+                                        <th class="text-center">Approval Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let block of assetTeamBlocks">
+                                        <td>{{ block.name }}</td>
+                                        <td>
+                                            <i class="ti ti-users"></i>
+                                            {{ block.memberCount || 0 }} Members
+                                        </td>
+                                        <td>{{ block.capacity }}</td>
+                                        <td>{{ block.startDate }}</td>
+                                        <td>{{ block.endDate }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                                                (click)="openAddMemberModal(block._id, block.assetTeamAckStatus?.trim() === 'requested','asset_team')">
+                                                View Member
+                                            </button>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="form-check fs-lg mb-2">
+                                                <input type="checkbox" class="form-check-input mt-1"
+                                                    id="checkSize1_{{ block._id }}"
+                                                    [checked]="block.assetTeamAckStatus === 'acknowledged'" disabled />
+                                                <label class="form-check-label fs-base"
+                                                    [for]="'checkSize1_' + block._id">
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="profile-ct" role="tabpanel">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Block Name</th>
+                                        <th>Team</th>
+                                        <th>Capacity(MW)</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Action</th>
+                                        <th class="text-center">Approval Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let block of qualityTeamBlocks">
+                                        <td>{{ block.name }}</td>
+                                        <td>
+                                            <i class="ti ti-users"></i>
+                                            {{ block.memberCount || 0 }} Members
+                                        </td>
+                                        <td>{{ block.capacity }}</td>
+                                        <td>{{ block.startDate }}</td>
+                                        <td>{{ block.endDate }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                data-bs-toggle="modal" data-bs-target="#full-width-modal"
+                                                (click)="openAddMemberModal(block._id, block.qualityTeamAckStatus?.trim() === 'requested','quality_team')">
+                                                View Member
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <div class="form-check fs-lg mb-2">
+                                                <input type="checkbox" class="form-check-input mt-1"
+                                                    id="checkSize1_{{ block._id }}"
+                                                    [checked]="block.qualityTeamAckStatus === 'acknowledged'"
+                                                    disabled />
+                                                <label class="form-check-label fs-base"
+                                                    [for]="'checkSize1_' + block._id">
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="full-width-modal" class="modal fade" tabindex="-1" role_name="dialog" aria-labelledby="fullWidthModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-full-width">
+        <div class="modal-content">
+            <div class="modal-body">
+                <ul class="nav nav-tabs nav-bordered mb-3">
+                    <li class="nav-item">
+                        <a href="#home-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
+                            Assigned Members
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home-b1">
+                        <div class="row">
+                            <div class="col-xxl-8">
+                                <div class="card">
+                                    <div class="card-header justify-content-between">
+                                        <h4 class="card-title">Assigned Members</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-xxl-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered align-middle mb-0"
+                                                        id="dataTable">
+                                                        <thead class="align-middle thead-sm">
+                                                            <tr class="text-uppercase fs-xxs">
+                                                                <th>Name</th>
+                                                                <th>Role</th>
+                                                                <th>Start Date</th>
+                                                                <th>Email</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-4" *ngIf="isViewOnlyMode">
+                                <div class="row">
+                                    <div class="col-xxl-12">
+                                        <button type="button"
+                                            (click)="request_for_acknowledgement(selectedBlockId,fromDivision)"
+                                            class="btn btn-primary">Click To
+                                            Acknowledge</button>
+                                    </div>
+                                    <div class="col-xxl-12 mt-2">
+                                        <span class="text-danger">Note:</span> By acknowledging this, you agreed to the
+                                        terms, usage guidelines, and responsibilities of the assigned project.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
