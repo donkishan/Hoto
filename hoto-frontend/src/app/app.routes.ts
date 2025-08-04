@@ -107,7 +107,6 @@ export const routes: Routes = [
         component: ProjectTeam,
         data: { title: 'Block Information' },
       },
-
       //site readiness
       {
         path: 'site-readiness',
@@ -124,7 +123,6 @@ export const routes: Routes = [
         component: BlockDetails,
         data: { title: 'Block Details' },
       },
-
       //punchpoints
       {
         path: 'punch-points',
@@ -141,7 +139,6 @@ export const routes: Routes = [
         component: PunchPointManagement,
         data: { title: 'Block Details' },
       },
-
       //project team
       {
         path: 'punch-points-project-team',
