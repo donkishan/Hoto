@@ -7,6 +7,7 @@ import { AssignUsersDto } from './dto/assign-users.dto';
 import { BlockMember } from './schemas/block-member.schema';
 import { User } from '../users/schemas/user.schema';
 import { Block, BlockDocument } from '../hoto-requests/schemas/block.schema';
+import { MailerService } from '@nestjs-modules/mailer';
 
 interface FilterItem {
   division?: string;
@@ -23,7 +24,8 @@ export class BlockInformationService {
     @InjectConnection() private readonly connection: Connection,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(BlockMember.name) private blockMemberModel: Model<BlockMember>,
-    @InjectModel(Block.name) private blockModel : Model<BlockDocument>
+    @InjectModel(Block.name) private blockModel : Model<BlockDocument>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async addMemberToUserCollection(data: any) {
@@ -383,17 +385,60 @@ export class BlockInformationService {
 
     if (!block) return null;
 
+    const projectName = 'Bhadla-4 Ph-1';
+    const projectCode = 'Bhadla-4 Ph-1';
     if(divisionId==='686b59aa42653fcea0802ab0'){
       //asset team
       block.assetTeamAckStatus = 'requested'; 
       block.assetTeamAckRaisedDate = new Date();
       block.assetTeamAckRaisedBy = new Types.ObjectId(userId);
+      
+
+     
+      await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Asset team requestd for team acknowledegement',
+        html: `
+          <p>Dear Team,</p>
+          <p>Asset team request for team acknowelegement for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
+
       return await block.save();
     }else{
       //quality team
       block.qualityTeamAckStatus = 'requested'; 
       block.qualityTeamAckRaisedDate = new Date();
       block.qualityTeamAckRaisedBy = new Types.ObjectId(userId);
+
+       await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Quality team requestd for team acknowledegement',
+        html: `
+          <p>Dear Team,</p>
+          <p>Quality team request for team acknowelegement for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR/>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
       return await block.save();
     }
   }
@@ -404,17 +449,61 @@ export class BlockInformationService {
 
     if (!block) return null;
 
+     const projectName = 'Bhadla-4 Ph-1';
+    const projectCode = 'Bhadla-4 Ph-1';
+
     if(divisionId==='686b59aa42653fcea0802ab0'){
       //asset team
       block.assetTeamAckStatus = 'acknowledged'; 
       block.assetTeamAckDate = new Date();
       block.assetTeamAckBy = new Types.ObjectId(userId);
+
+      await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Project Team acknoweledge the team.',
+        html: `
+          <p>Dear Team,</p>
+          <p>Project team has acknoweledge the team for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
+
       return await block.save();
+
+
     }else{
       //quality team
       block.qualityTeamAckStatus = 'acknowledged'; 
       block.qualityTeamAckDate = new Date();
       block.qualityTeamAckBy = new Types.ObjectId(userId);
+
+      await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Project Team acknoweledge the team.',
+        html: `
+          <p>Dear Team,</p>
+          <p>Project team has acknoweledge the team for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
       return await block.save();
     }
   }
@@ -425,17 +514,62 @@ export class BlockInformationService {
 
     if (!block) return null;
 
+     const projectName = 'Bhadla-4 Ph-1';
+    const projectCode = 'Bhadla-4 Ph-1';
+
     if(divisionId==='686b59aa42653fcea0802ab0'){
       //asset team
       block.assetTeamPunchPointStatus = 'requested'; 
       block.assetTeamPunchPointRaisedDate = new Date();
       block.assetTeamPunchPointBy = new Types.ObjectId(userId);
-      return await block.save();
+     
+
+      await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Asset team requestd for punchpoint acknowledegement',
+        html: `
+          <p>Dear Team,</p>
+          <p>Asset team request for punchpoint acknowelegement for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR/>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
+
+       return await block.save();
+
     }else if(divisionId==='686b59aa42653fcea0802ab1'){
       //quality team
       block.qualityTeamPunchPointStatus = 'requested'; 
       block.qualityTeamPunchPointRaisedDate = new Date();
       block.qualityTeamPunchPointBy = new Types.ObjectId(userId);
+
+        await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Quality team requestd for punchpoint acknowledegement',
+        html: `
+          <p>Dear Team,</p>
+          <p>Quality team request for punchpoint acknowelegement for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+         <BR/>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
+
       return await block.save();
     }else if(divisionId=='686b59a942653fcea0802aaf'){
       //project team
@@ -446,6 +580,26 @@ export class BlockInformationService {
       block.qualityTeamPunchPointAckBy = new Types.ObjectId(userId);
       block.qualityTeamPunchPointAckDate = new Date();
       block.qualityTeamPunchPointStatus = 'acknowledged';
+
+       await this.mailerService.sendMail({
+        to: 'raghu.darshan@proteam.co.in',
+        cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+        subject: 'Project team has acknowledge the punchpoints',
+        html: `
+          <p>Dear Team,</p>
+          <p>Project team has acknowledge the punchpoints for the project: <strong>${projectName}</strong></p>
+          <p><strong>Project Code:</strong> ${projectCode}</p>
+          <p>Please log in to the portal for more details.</p>
+          <br />
+          <br/>
+          This is system generated mail. Please do not replay.
+          <BR/>
+          Thanks & Tegards,
+          <BR/>
+          Hoto Team
+        `
+      });
+
       return await block.save();
     }
 

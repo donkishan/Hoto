@@ -7,6 +7,8 @@ import { Block, BlockDocument } from './schemas/block.schema';
 import * as fs from 'fs';
 import { TblogsService } from '../tblogs/tblogs.service';
 import { DivisionDocument } from '../divisions/schemas/division.schema';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ProjectDocument } from '../projects/schemas/project.schema';
 
 @Injectable()
 export class HotoRequestsService {
@@ -21,6 +23,11 @@ export class HotoRequestsService {
     private readonly divisionModel: Model<DivisionDocument>, 
 
     private readonly tblogsService: TblogsService,
+
+    private readonly mailerService: MailerService,
+
+    @InjectModel('Project') 
+    private projectModel: Model<ProjectDocument>,
 
   ) {}
   
@@ -54,6 +61,28 @@ export class HotoRequestsService {
         hoto: createdHoto.toObject(),
         blocks: blockDocs,
       },
+    });
+
+    const project = await this.projectModel.findById(hotoData.projectId).lean();
+    const projectName = project?.projectName || 'Unknown Project';
+
+    await this.mailerService.sendMail({
+      to: 'raghu.darshan@proteam.co.in',
+      cc:'jitendra@proteam.co.in,snehal.v@proteam.co.in',
+      subject: 'Hoto Request Has been Generated',
+      html: `
+        <p>Dear Team,</p>
+        <p>A HOTO request has been generated for the project: <strong>${projectName}</strong></p>
+        <p><strong>Project Code:</strong> ${createdHoto.projectCode}</p>
+        <p>Please log in to the portal for more details.</p>
+        <br />
+        <br/>
+        This is system generated mail. Please do not replay.
+        <BR>
+        Thanks & Tegards,
+        <BR/>
+        Hoto Team
+      `
     });
 
     return {
