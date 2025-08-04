@@ -1,0 +1,158 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <!-- Page Header -->
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Documentation Details</h4>
+    </div>
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Milestones</a></li>
+        <li class="breadcrumb-item"><a routerLink="/app/documentations">Documentation</a></li>
+        <li class="breadcrumb-item active">View</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Project Info -->
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header"><h5 class="mb-0">Project Completion Details</h5></div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Project Name</label>
+              <input type="text" class="form-control" [value]="projectName" readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Project ID</label>
+              <input type="text" class="form-control" [value]="projectCode" readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Plant Power</label>
+              <input type="text" class="form-control" [value]="plantPower" readonly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop & Full-Width Modal -->
+  <!-- Project Team Modal (Input links) -->
+<div *ngIf="showProjectTeamModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showProjectTeamModal" class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog modal-full-width">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Upload Document Links - {{ selectedDoc?.documentName }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let link of uploadedLinks; let i = index; trackBy: trackByIndex" class="mb-3">
+          <label [for]="'docLink' + i">Document {{ i + 1 }} Link</label>
+<input
+  type="text"
+  class="form-control"
+  [(ngModel)]="uploadedLinks[i]"
+  [id]="'docLink' + i"
+  [name]="'uploadedLink' + i"
+/>
+        </div>
+        <!-- <div class="mt-4">
+          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
+          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
+        </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Management Team Modal (Review links) -->
+<div *ngIf="showAssetMgmtModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showAssetMgmtModal" class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog modal-full-width">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Review Document Links - {{ selectedDoc?.documentName }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let link of uploadedLinks; let i = index" class="mb-3">
+          <label>Document {{ i + 1 }} Link</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [value]="link" readonly />
+            <ng-container *ngIf="link && link.trim() !== ''">
+              <button type="button"
+                      class="btn btn-outline-success"
+                      [class.active]="approvalStatus[i] === 'approved'"
+                      (click)="approvalStatus[i] = 'approved'">
+                Approve
+              </button>
+              <button type="button"
+                      class="btn btn-outline-danger"
+                      [class.active]="approvalStatus[i] === 'rejected'"
+                      (click)="approvalStatus[i] = 'rejected'">
+                Reject
+              </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- <div class="mt-4">
+          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
+          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
+          <p><strong>No. Approved:</strong> {{ getApprovedCount() }}</p>
+          <p><strong>% Approved:</strong> {{ getApprovedPercentage() }}</p>
+        </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Documentation Table -->
+  <div class="card mt-4">
+    <div class="card-header bg-success text-white fw-bold">Documentation Summary</div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-success text-dark">
+          <tr>
+            <th>Sl No.</th>
+            <th>Document Name</th>
+            <th>Responsible Department</th>
+            <th>No. of Documents Listed</th>
+            <th>No. of Documents Uploaded</th>
+            <th>% Uploaded</th>
+            <th>No. of Documents Accepted by O&M</th>
+            <th>% Accepted</th>
+            <th>Document Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of documentation?.documents; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ doc.documentName }}</td>
+            <td>{{ doc.divisionName }}</td>
+            <td>{{ doc.noOfDocuments }}</td>
+            <td>{{ doc.uploadedDocuments || 0 }}</td>
+            <td>{{ getUploadPercentage(doc) }}</td>
+            <td>{{ doc.acceptedByOM || 0 }}</td>
+            <td>{{ getAcceptancePercentage(doc) }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary mt-2" (click)="viewDocument(doc)">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../users/schemas/user.schema';
 import { BlockMemberSchema } from './schemas/block-member.schema';
 import { BlockSchema } from '../hoto-requests/schemas/block.schema';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -12,8 +13,8 @@ import { BlockSchema } from '../hoto-requests/schemas/block.schema';
       { name: 'User', schema: UserSchema },
       { name: 'BlockMember', schema: BlockMemberSchema },
       { name: 'Block', schema: BlockSchema },
-
-    ])
+    ]),
+    MailerModule,
   ],
   controllers: [BlockInformationController],
   providers: [BlockInformationService],

@@ -14,7 +14,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item dropdown" *ngIf="['Project Team','Admin']| isDivision">
+                    <li class="nav-item dropdown" *ngIf="['Project Team','Admin','Asset Management Team']| isDivision">
                         <a class="nav-link dropdown-toggle drop-arrow-none" href="#" id="topnav-apps" role="button"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="menu-icon"><i class="ti ti-apps"></i></span>
@@ -32,6 +32,11 @@
                                 class="dropdown-item">
                                 <i class="ti ti-layout-grid"></i> Projects
                             </a>
+                              <a routerLink="/app/documentation" role="button" class="dropdown-item"
+                            *ngIf="['Asset Management Team','Admin'] | isDivision">
+                            <i class="ti ti-file-text"></i> Documentation
+                        </a>
+
                         </div>
                     </li>
                     <li class="nav-item" *ngIf="['Project Team','Admin']| isDivision">
@@ -39,7 +44,7 @@
                             id="topnav-hoto-requests" data-bs-toggle="dropdown" role="button" aria-haspopup="true"
                             aria-expanded="false">
                             <span class="menu-icon"><i class="ti ti-clipboard-check"></i></span>
-                            <span class="menu-text"> Hoto Requests </span>
+                            <span class="menu-text"> HOTO Requests </span>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
@@ -65,6 +70,10 @@
                             <a *ngIf="['Asset Management Team','Quality Team','Project Team','Admin'] | isDivision"
                                 routerLink="/app/punch-points-status" role="button" class="dropdown-item"><i
                                     class="ti ti-users"></i>Punch Point Update</a>
+                            <a *ngIf="['Project Team','Admin','Asset Management Team'] | isDivision"
+                            routerLink="/app/documentations" role="button" class="dropdown-item">
+                            <i class="ti ti-file-description"></i> Documentation
+                            </a>        
                         </div>
                     </li>
                 </ul>
@@ -72,10 +81,12 @@
             </div>
             <div class="d-flex align-items-center gap-2 right-drop">
 
-                <div class="topbar-item nav-user">
+                <div  class="topbar-item nav-user ms-auto">
                     <div class="dropdown">
                         <a class="topbar-link dropdown-toggle drop-arrow-none px-2" data-bs-toggle="dropdown"
                             data-bs-offset="0,16" href="#!" aria-haspopup="false" aria-expanded="false">
+                            <img src="images/users/user-2.jpg" width="32" class="rounded-circle me-lg-2 d-flex"
+                            alt="user-image">
                             <div class="d-lg-flex align-items-center gap-1 d-none">
                                 <h5 class="my-0">{{ username }}</h5>
                                 <i class="ti ti-chevron-down align-middle"></i>
@@ -85,6 +96,7 @@
 
                             <div class="dropdown-header noti-title">
                                 <h6 class="text-overflow m-0">Welcome back!</h6>
+                                <small class="text-muted d-block">{{ divisionName }}</small> 
                             </div>
 
 

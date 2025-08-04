@@ -7,6 +7,8 @@ import { Block, BlockSchema } from './schemas/block.schema';
 import { HotoRequest, HotoRequestSchema } from './schemas/hoto-requests.schema';
 import { TblogsModule } from '../tblogs/tblogs.module';
 import { Division, DivisionSchema } from '../divisions/schemas/division.schema';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { Project, ProjectSchema } from '../projects/schemas/project.schema';
 
 @Module({
   imports: [
@@ -14,8 +16,10 @@ import { Division, DivisionSchema } from '../divisions/schemas/division.schema';
       { name: HotoRequest.name, schema: HotoRequestSchema },
       { name: Block.name, schema: BlockSchema },
       { name: Division.name, schema: DivisionSchema },
+      { name: Project.name, schema: ProjectSchema },
     ]),
     TblogsModule,
+    MailerModule,
   ],
   controllers: [HotoRequestsController],
   providers: [HotoRequestsService],

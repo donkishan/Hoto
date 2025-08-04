@@ -1,0 +1,70 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">{{isEditMode?'Update': 'Create'}} Documentation</h4>
+    </div>
+
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Mastes</a></li>
+        <li class="breadcrumb-item"><a routerLink="/app/documentation">Documentation</a></li>
+        <li class="breadcrumb-item active">{{isEditMode ? 'Update': 'Create'}}</li>
+      </ol>
+    </div>
+  </div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Project Completion Declaration</h5>
+      </div>
+
+      <div class="card-body">
+        <form>
+          <div class="row g-3">
+            <div class="col-md-3">
+  <label class="form-label">Project Name <span class="text-danger">*</span></label>
+  <select class="form-select select2" [(ngModel)]="formData.projectId" name="projectId">
+    <option value="" disabled selected>Select Project</option>
+    <option *ngFor="let project of projectList" [value]="project.id">{{ project.name }}</option>
+  </select>
+</div>
+
+          </div>
+
+          <div class="row g-3 mt-3" *ngFor="let doc of formData.documents; let i = index">
+            <div class="col-md-3">
+              <label class="form-label">Document Name</label>
+              <input type="text" class="form-control" [(ngModel)]="doc.documentName" name="documentName{{i}}">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">No. of Documents</label>
+              <input type="number" class="form-control" [(ngModel)]="doc.noOfDocuments" name="noOfDocuments{{i}}">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Division</label>
+              <select class="form-select" [(ngModel)]="doc.division" name="division{{ i }}">
+  <option value="">Select Division</option>
+  <option *ngFor="let division of divisionList" [value]="division._id">
+    {{ division.divisionCode }} - {{ division.divisionName }}
+  </option>
+</select>
+
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button type="button" class="btn btn-success me-2" (click)="addDocument()">+</button>
+              <button type="button" class="btn btn-danger" (click)="removeDocument(i)" [disabled]="formData.documents.length === 1">−</button>
+            </div>
+            <!-- Submit Button -->
+
+
+          </div>
+          <div class="text-end mt-4">
+  <button type="button" class="btn btn-primary" (click)="submitForm()">Submit</button>
+</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

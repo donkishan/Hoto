@@ -16,10 +16,13 @@ export class Header {
   constructor(private authService: AuthService) {}
     
   username: string = '';
+  divisionName: string = '';
   
   ngOnInit() {
     const storedUsername = localStorage.getItem('firstName');
-    this.username = storedUsername ? storedUsername : 'Guest';   
+    const storedDivision = localStorage.getItem('divisionName');
+    this.username = storedUsername ? storedUsername : 'Guest';
+    this.divisionName = storedDivision ? storedDivision : '';   
   }
 
   logout() {

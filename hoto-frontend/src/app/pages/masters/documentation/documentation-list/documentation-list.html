@@ -1,0 +1,45 @@
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Documentation</h4>
+    </div>
+
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Masters</a></li>
+        <li class="breadcrumb-item active">Documentation</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header justify-content-between">
+          <h4 class="card-title">Documentation List</h4>
+          <a routerLink="/app/documentation/create" class="btn btn-primary btn-sm" (click)="createNew()">
+            <i class="bi bi-plus-circle"></i> Create New
+          </a>
+        </div>
+
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0" id="dataTable">
+              <thead class="align-middle thead-sm th-green">
+                <tr>
+                  <th>Project Name</th>
+                  <th>Total Documents</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Populated by DataTable -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
