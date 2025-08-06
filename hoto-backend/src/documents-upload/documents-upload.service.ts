@@ -10,20 +10,32 @@ export class DocumentsUploadService {
   ) {}
 
   async create(createDto: CreateDocumentsUploadDto): Promise<any> {
-    const { documentId, projectId } = createDto;
+  const { documentId, projectId, uploadedLinks } = createDto;
 
-    const existing = await this.docUploadModel.findOne({ documentId, projectId });
+  // Ensure every uploaded link has a status
+  const linksWithStatus = uploadedLinks.map(linkObj => ({
+    link: linkObj.link,
+    status: linkObj.status || 'pending'
+  }));
 
-    if (existing) {
-      existing.uploadedLinks = createDto.uploadedLinks;
-      existing.uploadedCount = createDto.uploadedCount;
-      existing.acceptedByOM = createDto.acceptedByOM;
-      return existing.save();
-    }
+  const existing = await this.docUploadModel.findOne({ documentId, projectId });
 
-    const doc = new this.docUploadModel(createDto);
-    return doc.save();
+  if (existing) {
+    existing.uploadedLinks = linksWithStatus;
+    existing.uploadedCount = createDto.uploadedCount;
+    existing.acceptedByOM = createDto.acceptedByOM;
+    existing.rejectedByOM = createDto.rejectedByOM;
+    return existing.save();
   }
+
+  const doc = new this.docUploadModel({
+    ...createDto,
+    uploadedLinks: linksWithStatus
+  });
+
+  return doc.save();
+}
+
 
   async findAll(): Promise<any[]> {
     return this.docUploadModel.find().exec();

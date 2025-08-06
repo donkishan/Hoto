@@ -1,0 +1,347 @@
+// documentation-block.ts
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
+
+@Component({
+  selector: 'app-documentation-block',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './documentation-block.html',
+})
+export class DocumentationBlock implements OnInit {
+  private router = inject(Router);
+  private http = inject(HttpClient);
+  private baseUrl = environment.apiUrl;
+
+  documentation: any = null;
+  projectName = '';
+  projectCode = '';
+  plantPower = '';
+  selectedDoc: any = null;
+  uploadedLinks: string[] = [];
+  approvalStatus: ('approved' | 'rejected' | '')[] = [];
+  showProjectTeamModal = false;
+  showAssetMgmtModal = false;
+  divisionName = '';
+
+  ngOnInit(): void {
+    this.divisionName = localStorage.getItem('divisionName') || '';
+    const state = history.state.documentation;
+
+    if (state && state.projectDetails) {
+      this.documentation = state;
+      this.projectName = state.projectDetails.projectName || '';
+      this.projectCode = state.projectDetails.projectCode || '';
+      this.plantPower = state.projectDetails.plantPower || '';
+
+      this.loadUploadedDocuments(this.documentation.projectId);
+    } else {
+      Swal.fire('Warning', 'Project details not available.', 'warning');
+    }
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken') || '';
+    const email = localStorage.getItem('email') || '';
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'x-user-email': email
+    });
+  }
+
+  loadUploadedDocuments(projectId: string): void {
+    this.http.get<any[]>(`${this.baseUrl}/documents-upload?projectId=${projectId}`, {
+      headers: this.getAuthHeaders()
+    }).subscribe((uploads) => {
+      for (const doc of this.documentation.documents) {
+        const match = uploads.find(u => u.documentId === doc._id);
+        if (match) {
+          doc.uploadedLinks = match.uploadedLinks;
+          doc.uploadedDocuments = match.uploadedCount;
+          doc.acceptedByOM = match.acceptedByOM || 0;
+        }
+      }
+    });
+  }
+  trackByIndex(index: number, obj: any): any {
+  return index;
+}
+
+  getUploadPercentage(doc: any, fromModal = false): string {
+    const uploaded = fromModal ? this.getUploadedCount() : doc.uploadedDocuments || 0;
+    const total = doc.noOfDocuments || 1;
+    return `${Math.round((uploaded / total) * 100)}%`;
+  }
+
+  getAcceptancePercentage(doc: any): string {
+    const accepted = doc.acceptedByOM || 0;
+    const uploaded = doc.uploadedDocuments || 0;
+    if (uploaded === 0) return '0%';
+    return `${Math.round((accepted / uploaded) * 100)}%`;
+  }
+
+  getUploadedCount(): number {
+    return this.uploadedLinks.filter(link => link.trim() !== '').length;
+  }
+
+  getApprovedCount(): number {
+    return this.approvalStatus.filter(status => status === 'approved').length;
+  }
+
+  getApprovedPercentage(): string {
+    const totalUploaded = this.getUploadedCount();
+    const approved = this.getApprovedCount();
+    if (totalUploaded === 0) return '0%';
+    return `${Math.round((approved / totalUploaded) * 100)}%`;
+  }
+
+  viewDocument(doc: any): void {
+    this.selectedDoc = doc;
+    this.uploadedLinks = doc.uploadedLinks?.length
+  ? doc.uploadedLinks.map((link: string) => link || '')
+  : Array.from({ length: doc.noOfDocuments }, () => '');
+
+
+
+    if (this.divisionName === 'Asset Management Team') {
+      const count = doc.acceptedByOM || 0;
+      this.approvalStatus = this.uploadedLinks.map((link, index) =>
+        link?.trim() !== '' && index < count ? 'approved' : ''
+      );
+      this.showAssetMgmtModal = true;
+    } else {
+      this.approvalStatus = [];
+      this.showProjectTeamModal = true;
+    }
+  }
+
+  closeModal(): void {
+    this.showProjectTeamModal = false;
+    this.showAssetMgmtModal = false;
+    this.selectedDoc = null;
+    this.uploadedLinks = [];
+  }
+
+  submitDocumentUpload(): void {
+  if (!this.selectedDoc) return;
+
+  const totalDocs = this.selectedDoc.noOfDocuments || 0;
+  const uploadedCount = this.getUploadedCount();
+  const approvedCount = this.getApprovedCount();
+  const rejectedCount = this.approvalStatus.filter(status => status === 'rejected').length;
+  const pendingCount = uploadedCount - approvedCount - rejectedCount;
+
+  const payload = {
+    documentId: this.selectedDoc._id,
+    projectId: this.documentation.projectId,
+    uploadedLinks: this.uploadedLinks,
+    uploadedCount,
+    acceptedByOM: approvedCount
+  };
+
+  this.http.post(`${this.baseUrl}/documents-upload`, payload, {
+    headers: this.getAuthHeaders()
+  }).subscribe({
+    next: () => {
+      const index = this.documentation.documents.findIndex(
+        (doc: any) => doc._id === this.selectedDoc._id
+      );
+      if (index !== -1) {
+        this.documentation.documents[index].uploadedLinks = [...this.uploadedLinks];
+        this.documentation.documents[index].uploadedDocuments = uploadedCount;
+        this.documentation.documents[index].acceptedByOM = approvedCount;
+      }
+
+      // ✅ Dynamic Swal based on division
+      if (this.divisionName === 'Asset Management Team') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Review Saved',
+          html: `
+            <p><strong>Approved:</strong> ${approvedCount}</p>
+            <p><strong>Rejected:</strong> ${rejectedCount}</p>
+            <p><strong>Pending:</strong> ${pendingCount}</p>
+          `,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Upload Complete',
+          html: `
+            <p>You have uploaded <strong>${uploadedCount}</strong> out of <strong>${totalDocs}</strong> documents.</p>
+          `,
+        });
+      }
+
+      this.closeModal();
+    },
+    error: () => {
+      Swal.fire('Error', 'Failed to upload documents', 'error');
+    }
+  });
+}
+
+}
+<div class="container-fluid min-vh-100 d-flex flex-column">
+
+  <!-- Page Header -->
+  <div class="page-title-head d-flex align-items-center">
+    <div class="flex-grow-1">
+      <h4 class="fs-sm text-uppercase fw-bold m-0">Documentation Details</h4>
+    </div>
+    <div class="text-end">
+      <ol class="breadcrumb m-0 py-0">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Milestones</a></li>
+        <li class="breadcrumb-item"><a routerLink="/app/documentations">Documentation</a></li>
+        <li class="breadcrumb-item active">View</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Project Info -->
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header"><h5 class="mb-0">Project Completion Details</h5></div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Project Name</label>
+              <input type="text" class="form-control" [value]="projectName" readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Project ID</label>
+              <input type="text" class="form-control" [value]="projectCode" readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Plant Power</label>
+              <input type="text" class="form-control" [value]="plantPower" readonly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop & Full-Width Modal -->
+  <!-- Project Team Modal (Input links) -->
+<div *ngIf="showProjectTeamModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showProjectTeamModal" class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog modal-full-width">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Upload Document Links - {{ selectedDoc?.documentName }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let link of uploadedLinks; let i = index; trackBy: trackByIndex" class="mb-3">
+          <label [for]="'docLink' + i">Document {{ i + 1 }} Link</label>
+<input
+  type="text"
+  class="form-control"
+  [(ngModel)]="uploadedLinks[i]"
+  [id]="'docLink' + i"
+  [name]="'uploadedLink' + i"
+/>
+        </div>
+        <!-- <div class="mt-4">
+          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
+          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
+        </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Management Team Modal (Review links) -->
+<div *ngIf="showAssetMgmtModal" class="modal-backdrop fade show"></div>
+<div *ngIf="showAssetMgmtModal" class="modal d-block fade show" tabindex="-1">
+  <div class="modal-dialog modal-full-width">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Review Document Links - {{ selectedDoc?.documentName }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let link of uploadedLinks; let i = index" class="mb-3">
+          <label>Document {{ i + 1 }} Link</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [value]="link" readonly />
+            <ng-container *ngIf="link && link.trim() !== ''">
+              <button type="button"
+                      class="btn btn-outline-success"
+                      [class.active]="approvalStatus[i] === 'approved'"
+                      (click)="approvalStatus[i] = 'approved'">
+                Approve
+              </button>
+              <button type="button"
+                      class="btn btn-outline-danger"
+                      [class.active]="approvalStatus[i] === 'rejected'"
+                      (click)="approvalStatus[i] = 'rejected'">
+                Reject
+              </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- <div class="mt-4">
+          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
+          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
+          <p><strong>No. Approved:</strong> {{ getApprovedCount() }}</p>
+          <p><strong>% Approved:</strong> {{ getApprovedPercentage() }}</p>
+        </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Documentation Table -->
+  <div class="card mt-4">
+    <div class="card-header bg-success text-white fw-bold">Documentation Summary</div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-success text-dark">
+          <tr>
+            <th>Sl No.</th>
+            <th>Document Name</th>
+            <th>Responsible Department</th>
+            <th>No. of Documents Listed</th>
+            <th>No. of Documents Uploaded</th>
+            <th>% Uploaded</th>
+            <th>No. of Documents Accepted by O&M</th>
+            <th>% Accepted</th>
+            <th>Document Links</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of documentation?.documents; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ doc.documentName }}</td>
+            <td>{{ doc.divisionName }}</td>
+            <td>{{ doc.noOfDocuments }}</td>
+            <td>{{ doc.uploadedDocuments || 0 }}</td>
+            <td>{{ getUploadPercentage(doc) }}</td>
+            <td>{{ doc.acceptedByOM || 0 }}</td>
+            <td>{{ getAcceptancePercentage(doc) }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary mt-2" (click)="viewDocument(doc)">View</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

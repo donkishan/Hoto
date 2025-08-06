@@ -1,7 +1,7 @@
 <!-- ============================================================== -->
 <!-- Start Main Content -->
 <!-- ============================================================== -->
-<div class="container-fluid min-vh-100 d-flex flex-column">
+<!-- <div class="container-fluid min-vh-100 d-flex flex-column">
     <div class="page-title-head d-flex align-items-center">
         <div class="flex-grow-1">
             <h4 class="fs-sm text-uppercase fw-bold m-0">Dashboard</h4>
@@ -15,7 +15,200 @@
             </ol>
         </div>
     </div>
+</div> -->
+<!-- <header class="header">
+  <div class="header-content">
+    <div class="logo-section">
+      <div class="logo">ReNew</div>
+      <div class="dashboard-title">HOTO Analytics Dashboard</div>
+    </div>
+    <div class="status-indicators">
+      <div class="status-indicator">Live Projects: 12</div>
+      <div class="status-indicator">Last Updated: Now</div>
+    </div>
+  </div>
+</header> -->
+
+<div class="container">
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">Total Active Projects</div></div>
+    <div class="metric-card"><div class="metric-value">20</div><div class="metric-label">Total Users</div></div>
+    <div class="metric-card"><div class="metric-value">450MW</div><div class="metric-label">Total Capacity</div></div>
+    <div class="metric-card"><div class="metric-value">30</div><div class="metric-label">HOTO Requests</div></div>
+    <div class="metric-card"><div class="metric-value">20</div><div class="metric-label">HOTO Completed</div></div>
+    <div class="metric-card"><div class="metric-value">10</div><div class="metric-label">In Progress</div></div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <div class="chart-container">
+      <h3 class="chart-title">Project Timeline Progress</h3>
+      <canvas id="timelineChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3 class="chart-title">Milestone Status Distribution</h3>
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Additional Analytics -->
+  <div class="analytics-grid">
+    <div class="chart-container">
+      <h3 class="chart-title">Punch Points by Category</h3>
+      <canvas id="punchPointsChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3 class="chart-title">PAT Success Rate</h3>
+      <canvas id="patChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3 class="chart-title">Monthly HOTO Completions</h3>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Milestone Tracking -->
+  <div class="milestone-section">
+    <div class="milestone-header">
+      <h2 class="chart-title">HOTO Milestone Tracking</h2>
+      <div class="progress-bar"><div class="progress-fill" style="width: 65%"></div></div>
+    </div>
+
+    <!-- Static milestone items: Replace with *ngFor if dynamic -->
+    <div class="milestone-item completed">
+      <div class="milestone-number">H0</div>
+      <div class="milestone-content">
+        <div class="milestone-title">COD Intimation</div>
+        <div class="milestone-description">Intimation to Asset Management on COD of the project</div>
+      </div>
+      <div class="status-badge status-completed">Completed</div>
+    </div>
+
+    <div class="milestone-item completed">
+      <div class="milestone-number">H1</div>
+      <div class="milestone-content">
+        <div class="milestone-title">Asset Team Mobilisation</div>
+        <div class="milestone-description">Mobilisation of Asset team</div>
+      </div>
+      <div class="status-badge status-completed">Completed</div>
+    </div>
+
+    <div class="milestone-item completed">
+      <div class="milestone-number">H2</div>
+      <div class="milestone-content">
+        <div class="milestone-title">Module Cleaning & Maintenance</div>
+        <div class="milestone-description">Module Cleaning & Grass cutting activity</div>
+      </div>
+      <div class="status-badge status-completed">Completed</div>
+    </div>
+
+    <div class="milestone-item in-progress">
+      <div class="milestone-number">H3</div>
+      <div class="milestone-content">
+        <div class="milestone-title">Robotics/MCS Infrastructure</div>
+        <div class="milestone-description">Readiness of Robotics or MCS Infra</div>
+      </div>
+      <div class="status-badge status-progress">In Progress</div>
+    </div>
+
+    <div class="milestone-item in-progress">
+      <div class="milestone-number">H4</div>
+      <div class="milestone-content">
+        <div class="milestone-title">Project Completion Declaration</div>
+        <div class="milestone-description">Project declares Transmission Line, Switchyard & Blockwise/Activity wise completion with Quality confirmation</div>
+      </div>
+      <div class="status-badge status-progress">In Progress</div>
+    </div>
+
+    <div class="milestone-item pending">
+      <div class="milestone-number">H5</div>
+      <div class="milestone-content">
+        <div class="milestone-title">Punch Points Sharing</div>
+        <div class="milestone-description">Asset Management shares punch points basis on Transmission Line, Switchyard & Blockwise offering by EPC</div>
+      </div>
+      <div class="status-badge status-pending">Pending</div>
+    </div>
+    <div class="milestone-item pending">
+                <div class="milestone-number">H6</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Critical Punch Points Closure</div>
+                    <div class="milestone-description">Closure of all Category A (Critical) punch points with AM team confirmation</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H7</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">PAT Documents Handover</div>
+                    <div class="milestone-description">Handover of all PAT Related Documents</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H8</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Performance Acceptance Test</div>
+                    <div class="milestone-description">PAT (Subject to conditions as set out in HOTO process)</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H9</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">PAT Sign-off</div>
+                    <div class="milestone-description">PAT Sign Off</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H10</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Project Stabilization</div>
+                    <div class="milestone-description">100% capacity, critical points closure, PAT passed, OPC data, MCS completion, housekeeping</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H11</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Documentation & Inventory</div>
+                    <div class="milestone-description">Handover of 100% Documents in DMS and Sign-off of spare material/inventory</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H12</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Non-Critical Points Closure</div>
+                    <div class="milestone-description">Completion of all punch points (All Non-Critical)</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+
+            <div class="milestone-item pending">
+                <div class="milestone-number">H13</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Final HOTO Sign-off</div>
+                    <div class="milestone-description">HOTO Sign-off</div>
+                </div>
+                <div class="status-badge status-pending">Pending</div>
+            </div>
+        </div>
+
+
+
+  <div class="footer">
+    <p>&copy; 2024 ReNew Power. HOTO Analytics Dashboard - Real-time Project Management</p>
+  </div>
 </div>
+
 <!-- container -->
 <!-- ============================================================== -->
 <!-- End of Main Content -->

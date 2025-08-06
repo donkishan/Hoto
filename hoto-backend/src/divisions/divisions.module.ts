@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   providers: [DivisionsService],
   imports:[
     MongooseModule.forFeature([{ name: Division.name, schema: DivisionSchema }])
-  ]
+  ],
+  exports: [MongooseModule]
 })
 export class DivisionsModule {}

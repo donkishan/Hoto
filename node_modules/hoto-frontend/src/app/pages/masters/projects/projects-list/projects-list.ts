@@ -75,6 +75,11 @@ export class ProjectsList implements AfterViewInit, OnDestroy {
       const id = $(event.currentTarget).data('id');
       this.editProject(id);
     });
+    $('#dataTable tbody').on('click', '.open-dashboard', () => {
+  this.router.navigate(['/app/projects/dashboard']);
+});
+
+
 
     $('#dataTable tbody').on('click', '.delete-project', (event: any) => {
       const id = $(event.currentTarget).data('id');
@@ -120,6 +125,10 @@ export class ProjectsList implements AfterViewInit, OnDestroy {
       }
     });
   }
+  viewDashboard(): void {
+  this.router.navigate(['/app/projects/dashboard']);
+}
+
 
 
   confirmDelete(id: string): void {

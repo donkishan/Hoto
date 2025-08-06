@@ -1,4 +1,20 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsNumber,
+  ValidateNested
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class UploadedLinkDto {
+  @IsString()
+  link: string;
+
+  @IsString()
+  status: 'approved' | 'rejected' | 'pending';
+}
 
 export class CreateDocumentsUploadDto {
   @IsNotEmpty()
@@ -10,14 +26,19 @@ export class CreateDocumentsUploadDto {
   projectId: string;
 
   @IsArray()
-  @IsString({ each: true })
-  uploadedLinks: string[];
+  @ValidateNested({ each: true })
+  @Type(() => UploadedLinkDto)
+  uploadedLinks: UploadedLinkDto[];
 
   @IsOptional()
   @IsNumber()
   uploadedCount?: number;
 
-   @IsOptional()
+  @IsOptional()
   @IsNumber()
   acceptedByOM?: number;
+
+  @IsOptional()
+  @IsNumber()
+  rejectedByOM?: number;
 }

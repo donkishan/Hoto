@@ -16,6 +16,7 @@ import { DivisionsModule } from '../divisions/divisions.module';
     DivisionsModule
   ],
   controllers: [DocumentationController],
-  providers: [DocumentationService]
+  providers: [DocumentationService],
+  exports: [MongooseModule] ,
 })
 export class DocumentationModule {}

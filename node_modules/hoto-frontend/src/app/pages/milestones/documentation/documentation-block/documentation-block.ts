@@ -1,4 +1,3 @@
-// documentation-block.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -23,8 +22,11 @@ export class DocumentationBlock implements OnInit {
   projectCode = '';
   plantPower = '';
   selectedDoc: any = null;
-  uploadedLinks: string[] = [];
-  approvalStatus: ('approved' | 'rejected' | '')[] = [];
+
+  uploadedLinks: { link: string; status: 'approved' | 'rejected' | 'pending'; editable: boolean }[] = [];
+
+  tempStatuses: ('approved' | 'rejected' | 'pending' | '')[] = [];
+
   showProjectTeamModal = false;
   showAssetMgmtModal = false;
   divisionName = '';
@@ -38,7 +40,6 @@ export class DocumentationBlock implements OnInit {
       this.projectName = state.projectDetails.projectName || '';
       this.projectCode = state.projectDetails.projectCode || '';
       this.plantPower = state.projectDetails.plantPower || '';
-
       this.loadUploadedDocuments(this.documentation.projectId);
     } else {
       Swal.fire('Warning', 'Project details not available.', 'warning');
@@ -61,16 +62,18 @@ export class DocumentationBlock implements OnInit {
       for (const doc of this.documentation.documents) {
         const match = uploads.find(u => u.documentId === doc._id);
         if (match) {
-          doc.uploadedLinks = match.uploadedLinks;
+          doc.uploadedLinks = match.uploadedLinks || [];
           doc.uploadedDocuments = match.uploadedCount;
           doc.acceptedByOM = match.acceptedByOM || 0;
+          doc.rejectedByOM = match.rejectedByOM || 0;
         }
       }
     });
   }
+
   trackByIndex(index: number, obj: any): any {
-  return index;
-}
+    return index;
+  }
 
   getUploadPercentage(doc: any, fromModal = false): string {
     const uploaded = fromModal ? this.getUploadedCount() : doc.uploadedDocuments || 0;
@@ -86,97 +89,148 @@ export class DocumentationBlock implements OnInit {
   }
 
   getUploadedCount(): number {
-    return this.uploadedLinks.filter(link => link.trim() !== '').length;
+    return this.uploadedLinks.filter(link => link.link.trim() !== '').length;
   }
 
   getApprovedCount(): number {
-    return this.approvalStatus.filter(status => status === 'approved').length;
-  }
+  return (this.divisionName === 'Asset Management Team'
+    ? this.tempStatuses
+    : this.uploadedLinks.map(u => u.status)).filter(status => status === 'approved').length;
+}
 
-  getApprovedPercentage(): string {
-    const totalUploaded = this.getUploadedCount();
-    const approved = this.getApprovedCount();
-    if (totalUploaded === 0) return '0%';
-    return `${Math.round((approved / totalUploaded) * 100)}%`;
-  }
+getRejectedCount(): number {
+  return (this.divisionName === 'Asset Management Team'
+    ? this.tempStatuses
+    : this.uploadedLinks.map(u => u.status)).filter(status => status === 'rejected').length;
+}
 
-  viewDocument(doc: any): void {
-    this.selectedDoc = doc;
-    this.uploadedLinks = doc.uploadedLinks?.length
-  ? doc.uploadedLinks.map((link: string) => link || '')
-  : Array.from({ length: doc.noOfDocuments }, () => '');
-
+getPendingCount(): number {
+  return this.getUploadedCount() - this.getApprovedCount() - this.getRejectedCount();
+}
 
 
-    if (this.divisionName === 'Asset Management Team') {
-      const count = doc.acceptedByOM || 0;
-      this.approvalStatus = this.uploadedLinks.map((link, index) =>
-        link?.trim() !== '' && index < count ? 'approved' : ''
-      );
-      this.showAssetMgmtModal = true;
-    } else {
-      this.approvalStatus = [];
-      this.showProjectTeamModal = true;
+  onLinkChange(index: number): void {
+    if (this.divisionName !== 'Asset Management Team') {
+      const trimmed = this.uploadedLinks[index].link.trim();
+      this.uploadedLinks[index].status = trimmed ? 'pending' : 'pending';
     }
   }
+  canEditAssetLink(index: number): boolean {
+  // Disable editing if originally approved
+  const originalStatus = this.selectedDoc?.uploadedLinks?.[index]?.status;
+  return originalStatus !== 'approved';
+}
 
-  closeModal(): void {
-    this.showProjectTeamModal = false;
-    this.showAssetMgmtModal = false;
-    this.selectedDoc = null;
-    this.uploadedLinks = [];
+
+ viewDocument(doc: any): void {
+  this.selectedDoc = doc;
+
+  const hasAssetReviewed = Array.isArray(doc.uploadedLinks) &&
+    doc.uploadedLinks.some((u: any) => ['approved', 'rejected'].includes(u.status));
+
+  this.uploadedLinks = doc.uploadedLinks?.length
+    ? doc.uploadedLinks.map((obj: any) => {
+        const status = obj.status || 'pending';
+        const editable = this.divisionName !== 'Asset Management Team'
+          ? status !== 'approved' // Project Team: only approved is locked
+          : true; // Asset Team can change everything until saved
+
+        return {
+          link: obj.link || '',
+          status,
+          editable
+        };
+      })
+    : Array.from({ length: doc.noOfDocuments }, () => ({
+        link: '',
+        status: 'pending',
+        editable: true
+      }));
+
+  this.tempStatuses = this.uploadedLinks.map(obj => obj.status || 'pending');
+
+  if (this.divisionName === 'Asset Management Team') {
+    this.showAssetMgmtModal = true;
+  } else {
+    this.showProjectTeamModal = true;
   }
+}
 
-  submitDocumentUpload(): void {
+submitDocumentUpload(): void {
   if (!this.selectedDoc) return;
 
-  const totalDocs = this.selectedDoc.noOfDocuments || 0;
+  const doc = this.selectedDoc;
+
+  // Apply tempStatuses on Save
+  if (this.divisionName === 'Asset Management Team') {
+    this.uploadedLinks = this.uploadedLinks.map((item, i) => ({
+      ...item,
+      status: this.tempStatuses[i] || 'pending'
+    }));
+  } else {
+    this.uploadedLinks = this.uploadedLinks.map((linkObj: any) => {
+  const trimmedLink = (linkObj.link || '').trim();
+  return {
+    link: trimmedLink,
+    status: linkObj.editable ? 'pending' : linkObj.status,  // preserve status if not editable
+    editable: linkObj.editable
+  };
+});
+
+  }
+
   const uploadedCount = this.getUploadedCount();
   const approvedCount = this.getApprovedCount();
-  const rejectedCount = this.approvalStatus.filter(status => status === 'rejected').length;
-  const pendingCount = uploadedCount - approvedCount - rejectedCount;
+  const rejectedCount = this.getRejectedCount();
+  const pendingCount = this.getPendingCount();
+
+  if (this.divisionName !== 'Asset Management Team') {
+  const hasApproved = Array.isArray(doc.uploadedLinks) &&
+    doc.uploadedLinks.some((u: any) => u.status === 'approved');
+
+  if (hasApproved) {
+    const attemptedEditOfApproved = this.uploadedLinks.some(
+      (link, idx) => doc.uploadedLinks[idx]?.status === 'approved' && link.link !== doc.uploadedLinks[idx]?.link
+    );
+
+    if (attemptedEditOfApproved) {
+      Swal.fire('Info', 'One or more approved documents cannot be edited.', 'info');
+      return;
+    }
+  }
+}
+
 
   const payload = {
-    documentId: this.selectedDoc._id,
+    documentId: doc._id,
     projectId: this.documentation.projectId,
     uploadedLinks: this.uploadedLinks,
     uploadedCount,
-    acceptedByOM: approvedCount
+    acceptedByOM: approvedCount,
+    rejectedByOM: rejectedCount
   };
 
   this.http.post(`${this.baseUrl}/documents-upload`, payload, {
     headers: this.getAuthHeaders()
   }).subscribe({
     next: () => {
-      const index = this.documentation.documents.findIndex(
-        (doc: any) => doc._id === this.selectedDoc._id
-      );
+      const index = this.documentation.documents.findIndex((d: any) => d._id === doc._id);
       if (index !== -1) {
         this.documentation.documents[index].uploadedLinks = [...this.uploadedLinks];
         this.documentation.documents[index].uploadedDocuments = uploadedCount;
         this.documentation.documents[index].acceptedByOM = approvedCount;
+        this.documentation.documents[index].rejectedByOM = rejectedCount;
       }
 
-      // ✅ Dynamic Swal based on division
-      if (this.divisionName === 'Asset Management Team') {
-        Swal.fire({
-          icon: 'success',
-          title: 'Review Saved',
-          html: `
-            <p><strong>Approved:</strong> ${approvedCount}</p>
-            <p><strong>Rejected:</strong> ${rejectedCount}</p>
-            <p><strong>Pending:</strong> ${pendingCount}</p>
-          `,
-        });
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: 'Upload Complete',
-          html: `
-            <p>You have uploaded <strong>${uploadedCount}</strong> out of <strong>${totalDocs}</strong> documents.</p>
-          `,
-        });
-      }
+      Swal.fire({
+        icon: 'success',
+        title: this.divisionName === 'Asset Management Team' ? 'Review Saved' : 'Upload Complete',
+        html: this.divisionName === 'Asset Management Team'
+          ? `<p><strong>Approved:</strong> ${approvedCount}</p>
+             <p><strong>Rejected:</strong> ${rejectedCount}</p>
+             <p><strong>Pending:</strong> ${pendingCount}</p>`
+          : `<p>You have uploaded <strong>${uploadedCount}</strong> out of <strong>${doc.noOfDocuments}</strong> documents.</p>`
+      });
 
       this.closeModal();
     },
@@ -186,4 +240,14 @@ export class DocumentationBlock implements OnInit {
   });
 }
 
+
+
+  closeModal(): void {
+    this.showProjectTeamModal = false;
+    this.showAssetMgmtModal = false;
+    this.selectedDoc = null;
+    this.uploadedLinks = [];
+  }
+
+  
 }

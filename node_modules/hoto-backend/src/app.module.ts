@@ -19,7 +19,8 @@ import { SiteReadinessModule } from './site-readiness/site-readiness.module';
 import { BlockDetailsModule } from './block-details/block-details.module';
 import { PunchPointModule } from './punch-point/punch-point.module';
 import { FilesModule } from './files/files.module';
-
+import { DocumentationModule } from './documentation/documentation.module';
+import { DocumentsUploadModule } from './documents-upload/documents-upload.module';
 
 @Module({
   imports: [
@@ -71,7 +72,9 @@ import { FilesModule } from './files/files.module';
     SiteReadinessModule,
     BlockDetailsModule,
     PunchPointModule,
-    FilesModule
+    FilesModule,
+    DocumentationModule,
+    DocumentsUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

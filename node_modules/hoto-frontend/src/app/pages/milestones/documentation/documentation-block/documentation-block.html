@@ -39,8 +39,7 @@
     </div>
   </div>
 
-  <!-- Modal Backdrop & Full-Width Modal -->
-  <!-- Project Team Modal (Input links) -->
+ <!-- Project Team Modal (Input links) -->
 <div *ngIf="showProjectTeamModal" class="modal-backdrop fade show"></div>
 <div *ngIf="showProjectTeamModal" class="modal d-block fade show" tabindex="-1">
   <div class="modal-dialog modal-full-width">
@@ -52,18 +51,26 @@
       <div class="modal-body">
         <div *ngFor="let link of uploadedLinks; let i = index; trackBy: trackByIndex" class="mb-3">
           <label [for]="'docLink' + i">Document {{ i + 1 }} Link</label>
-<input
+          <div class="d-flex align-items-start gap-2">
+            <div class="flex-grow-1">
+              <input
   type="text"
   class="form-control"
-  [(ngModel)]="uploadedLinks[i]"
-  [id]="'docLink' + i"
-  [name]="'uploadedLink' + i"
+  [(ngModel)]="uploadedLinks[i].link"
+  (ngModelChange)="onLinkChange(i)"
+  [readonly]="!uploadedLinks[i]?.editable"
+  [ngClass]="{ 'readonly-input': !uploadedLinks[i]?.editable }"
 />
+
+            </div>
+            <div class="pt-2">
+              <span *ngIf="uploadedLinks[i]?.status === 'approved'" class="badge bg-success">Approved</span>
+              <span *ngIf="uploadedLinks[i]?.status === 'rejected'" class="badge bg-danger">Rejected</span>
+              <span *ngIf="uploadedLinks[i]?.status === 'pending' && uploadedLinks[i]?.link?.trim() !== ''" class="badge bg-warning text-dark">Pending</span>
+              <span *ngIf="!uploadedLinks[i]?.link?.trim()" class="badge bg-secondary">Empty</span>
+            </div>
+          </div>
         </div>
-        <!-- <div class="mt-4">
-          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
-          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
-        </div> -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
@@ -73,6 +80,7 @@
   </div>
 </div>
 
+<!-- Asset Management Team Modal (Review links) -->
 <!-- Asset Management Team Modal (Review links) -->
 <div *ngIf="showAssetMgmtModal" class="modal-backdrop fade show"></div>
 <div *ngIf="showAssetMgmtModal" class="modal d-block fade show" tabindex="-1">
@@ -86,30 +94,33 @@
         <div *ngFor="let link of uploadedLinks; let i = index" class="mb-3">
           <label>Document {{ i + 1 }} Link</label>
           <div class="input-group">
-            <input type="text" class="form-control" [value]="link" readonly />
-            <ng-container *ngIf="link && link.trim() !== ''">
-              <button type="button"
-                      class="btn btn-outline-success"
-                      [class.active]="approvalStatus[i] === 'approved'"
-                      (click)="approvalStatus[i] = 'approved'">
-                Approve
-              </button>
-              <button type="button"
-                      class="btn btn-outline-danger"
-                      [class.active]="approvalStatus[i] === 'rejected'"
-                      (click)="approvalStatus[i] = 'rejected'">
-                Reject
-              </button>
+            <input type="text" class="form-control" [value]="link.link" readonly />
+            <ng-container *ngIf="link.link?.trim() !== ''">
+             <button type="button"
+        class="btn btn-outline-success"
+        [class.active]="tempStatuses[i] === 'approved'"
+        [disabled]="!canEditAssetLink(i)"
+        (click)="tempStatuses[i] = 'approved'">
+  Approve
+</button>
+
+<button type="button"
+        class="btn btn-outline-danger"
+        [class.active]="tempStatuses[i] === 'rejected'"
+        [disabled]="!canEditAssetLink(i)"
+        (click)="tempStatuses[i] = 'rejected'">
+  Reject
+</button>
+
             </ng-container>
           </div>
+          <div class="mt-1 ms-2">
+            <span *ngIf="tempStatuses[i] === 'approved'" class="badge bg-success">Approved</span>
+            <span *ngIf="tempStatuses[i] === 'rejected'" class="badge bg-danger">Rejected</span>
+            <span *ngIf="tempStatuses[i] === 'pending' && link.link?.trim() !== ''" class="badge bg-warning text-dark">Pending</span>
+            <span *ngIf="!link.link?.trim()" class="badge bg-secondary">Empty</span>
+          </div>
         </div>
-
-        <!-- <div class="mt-4">
-          <p><strong>No. Uploaded:</strong> {{ getUploadedCount() }}</p>
-          <p><strong>% Uploaded:</strong> {{ getUploadPercentage(selectedDoc, true) }}</p>
-          <p><strong>No. Approved:</strong> {{ getApprovedCount() }}</p>
-          <p><strong>% Approved:</strong> {{ getApprovedPercentage() }}</p>
-        </div> -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="submitDocumentUpload()">Save</button>
@@ -118,6 +129,7 @@
     </div>
   </div>
 </div>
+
 
   <!-- Documentation Table -->
   <div class="card mt-4">

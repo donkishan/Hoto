@@ -16,5 +16,6 @@ import { TblogsModule } from '../tblogs/tblogs.module';
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],
+   exports: [MongooseModule] ,
 })
 export class ProjectsModule {}

@@ -152,9 +152,15 @@ export class ProjectsService {
       action :item.status=='draft' ? `
           <button class="btn btn-sm btn-icon btn-sm rounded-circle btn-light view-project" data-id="${item._id}"
           data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View"><i class="ti ti-eye"></i></button>
+          <button class="btn btn-sm btn-icon btn-sm rounded-circle btn-info open-dashboard"
+    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Open Dashboard">
+    <i class="ti ti-layout-dashboard"></i>
+  </button>
+
           <button class="btn btn-sm btn-icon btn-sm rounded-circle btn-purple edit-project" data-id="${item._id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit Role">
             <i class="ti ti-edit"></i> 
           </button>
+
           <button class="btn btn-sm btn-icon btn-sm rounded-circle ${item.is_active ? 'btn-success' : 'btn-warning'} toggle-user" data-id="${item._id}" data-status="${item.is_active}" 
           data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Click To In-active">
             ${item.is_active ? '<i class="ti ti-check"></i>' : '<i class="ti ti-cancel fs-lg"></i>'}
@@ -162,7 +168,12 @@ export class ProjectsService {
           <button class="btn btn-sm btn-icon btn-sm rounded-circle btn-danger delete-project" data-id="${item._id}"
           data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Click To Delete"><i class="ti ti-trash"></i></button>
           `:`<button class="btn btn-sm btn-icon btn-sm rounded-circle btn-light view-project" data-id="${item._id}"
-          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View"><i class="ti ti-eye"></i></button>`
+          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View"><i class="ti ti-eye"></i></button>
+          <button class="btn btn-sm btn-icon btn-sm rounded-circle btn-info open-dashboard"
+    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Open Dashboard">
+    <i class="ti ti-layout-dashboard"></i>
+  </button>
+`
     }));
 
     return {
