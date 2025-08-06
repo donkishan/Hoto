@@ -1,0 +1,232 @@
+<!-- <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="highlight">Re</span>New HOTO Dashboard
+            </div>
+            <div class="project-selector">
+                <select class="project-dropdown" id="projectSelector">
+                    <option value="alpha">Project Alpha - Solar 500MW</option>
+                    <option value="beta">Project Beta - Wind 300MW</option>
+                    <option value="gamma">Project Gamma - Hybrid 750MW</option>
+                    <option value="delta">Project Delta - Solar 400MW</option>
+                    <option value="epsilon">Project Epsilon - Wind 600MW</option>
+                </select>
+                <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="container">
+        <!-- Project Information -->
+        <div class="project-info">
+            <div class="project-details">
+                <h2 id="projectTitle">Project Alpha - Solar Power Plant</h2>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Capacity:</span>
+                        <span class="meta-value" id="projectCapacity">500 MW</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Location:</span>
+                        <span class="meta-value" id="projectLocation">Rajasthan, India</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Start Date:</span>
+                        <span class="meta-value" id="projectStart">Jan 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Expected COD:</span>
+                        <span class="meta-value" id="projectCOD">Dec 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">EPC Partner:</span>
+                        <span class="meta-value" id="projectEPC">ABC Engineering</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Current Phase:</span>
+                        <span class="meta-value" id="projectPhase">H4 - Project Declaration</span>
+                    </div>
+                </div>
+            </div>
+            <div class="overall-progress">
+                <div class="progress-circle">
+                    <span class="progress-text" id="overallProgress">82%</span>
+                </div>
+                <h3 style="color: #2e7d32; margin-bottom: 10px;">Overall Progress</h3>
+                <p style="color: #666;">Days Remaining: <strong id="daysRemaining">45</strong></p>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="kpi-value" id="completedMilestones">5</div>
+                <div class="kpi-label">Completed Milestones</div>
+            </div>
+            <div class="kpi-card orange">
+                <div class="kpi-value" id="activeMilestones">2</div>
+                <div class="kpi-label">Active Milestones</div>
+            </div>
+            <div class="kpi-card blue">
+                <div class="kpi-value" id="qualityScore">94.2%</div>
+                <div class="kpi-label">Quality Score</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-value" id="openIssues">8</div>
+                <div class="kpi-label">Open Issues</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-value" id="actualCapacity">410 MW</div>
+                <div class="kpi-label">Installed Capacity</div>
+            </div>
+            <div class="kpi-card blue">
+                <div class="kpi-value" id="efficiency">98.5%</div>
+                <div class="kpi-label">System Efficiency</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">📋</div>
+                    HOTO Milestones Progress
+                </h3>
+                <div class="milestone-container" id="milestoneContainer">
+                    
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">📊</div>
+                    Milestone Distribution
+                </h3>
+                <div class="chart-container">
+                    <canvas id="milestoneChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">🔧</div>
+                    Issue Categories
+                </h3>
+                <div class="chart-container">
+                    <canvas id="issueChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">⚡</div>
+                    Capacity Installation
+                </h3>
+                <div class="chart-container">
+                    <canvas id="capacityChart"></canvas>
+                </div>
+            </div>
+            <div class="card timeline-chart">
+                <h3 class="card-title">
+                    <div class="icon">📅</div>
+                    Project Timeline
+                </h3>
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="analytics-grid">
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">🎯</div>
+                    Quality Metrics
+                </h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Documentation Quality</span>
+                        <span id="docQuality">95%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Installation Quality</span>
+                        <span id="installQuality">88%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 88%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Testing Compliance</span>
+                        <span id="testCompliance">92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Safety Compliance</span>
+                        <span id="safetyCompliance">97%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 97%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">⚠️</div>
+                    Risk Assessment
+                </h3>
+                <div class="risk-indicator">
+                    <div class="risk-level">🟡</div>
+                    <div class="risk-text" style="color: #ff9800;" id="riskLevel">Medium Risk</div>
+                    <div class="risk-description" id="riskDescription">
+                        2 critical milestones require immediate attention. Weather conditions may impact timeline.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">
+                    <div class="icon">👥</div>
+                    Team Performance
+                </h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><span class="status-indicator status-completed"></span>EPC Team</span>
+                        <span><strong>95% Efficiency</strong></span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><span class="status-indicator status-progress"></span>Asset Team</span>
+                        <span><strong>88% Efficiency</strong></span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><span class="status-indicator status-completed"></span>Quality Team</span>
+                        <span><strong>92% Efficiency</strong></span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><span class="status-indicator status-pending"></span>Documentation</span>
+                        <span><strong>85% Complete</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

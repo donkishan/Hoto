@@ -6,6 +6,8 @@ import { Divisions } from './pages/masters/divisions/divisions';
 import { Users } from './pages/masters/users/users';
 import { authGuard } from './guards/auth-guard';
 import { Projects } from './pages/masters/projects/projects';
+import { CreateProjectsdashboard } from './pages/masters/projects/create-projectsdashboard/create-projectsdashboard';
+
 import { HotoRequests } from './pages/hoto-requests/hoto-requests';
 
 import { ProjectsList } from './pages/masters/projects/projects-list/projects-list';
@@ -74,7 +76,13 @@ export const routes: Routes = [
         component: ViewProject,
         data: { title: 'View Project' },
       },
+      {
+  path: 'projects/dashboard',
+  component: CreateProjectsdashboard,
+  data: { title: 'Project Dashboard' }
+},
 
+      
       {
         path: 'hoto-requests',
         component: HotoRequestsList,

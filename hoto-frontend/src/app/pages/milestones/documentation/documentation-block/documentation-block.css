@@ -1,0 +1,7 @@
+.readonly-input {
+  background-color: #e9ecef !important;  /* Light grey like disabled inputs */
+  color: #6c757d;                        /* Muted text */
+  cursor: not-allowed;                   /* Disabled-style cursor */
+  pointer-events: none;                  /* Prevent user interaction */
+  border-color: #ced4da;                 /* Match default border */
+}
